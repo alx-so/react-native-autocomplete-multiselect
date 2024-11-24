@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { AutoComplete } from 'react-native-autocomplete-select';
+import { AutoComplete } from 'react-native-autocomplete-multiselect';
 
 export default function App() {
   return (

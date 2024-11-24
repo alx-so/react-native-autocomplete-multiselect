@@ -1,18 +1,18 @@
-# react-native-autocomplete-select
+# react-native-autocomplete-multiselect
 
 Lightweight, flexible dropdown picker for React Native, featuring autocomplete (typeahead) functionality. It emulates the <select> interfaces for each platform, making it ideal for use cases like tagging, contact lists, country selection, or any functionality requiring list-based selection.
 
 ## Installation
 
 ```sh
-npm install react-native-autocomplete-select
+npm install react-native-autocomplete-multiselect
 ```
 
 ## Usage
 
 
 ```js
-import { multiply } from 'react-native-autocomplete-select';
+import { multiply } from 'react-native-autocomplete-multiselect';
 
 // ...
 

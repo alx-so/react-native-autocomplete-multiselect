@@ -1,5 +1,5 @@
 {
-  "name": "react-native-autocomplete-select",
+  "name": "react-native-autocomplete-multiselect",
   "version": "0.1.0",
   "description": "Lightweight, flexible dropdown picker for React Native, featuring autocomplete (typeahead) functionality. It emulates the <select> interfaces for each platform, making it ideal for use cases like tagging, contact lists, country selection, or any functionality requiring list-based selection.",
   "source": "./src/index.tsx",
@@ -37,7 +37,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-autocomplete-select-example",
+    "example": "yarn workspace react-native-autocomplete-multiselect-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -52,14 +52,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alx-so/react-native-autocomplete-select.git"
+    "url": "git+https://github.com/alx-so/react-native-autocomplete-multiselect.git"
   },
   "author": "alx-so <alxs.public@gmail.com> (https://github.com/alx-so)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alx-so/react-native-autocomplete-select/issues"
+    "url": "https://github.com/alx-so/react-native-autocomplete-multiselect/issues"
   },
-  "homepage": "https://github.com/alx-so/react-native-autocomplete-select#readme",
+  "homepage": "https://github.com/alx-so/react-native-autocomplete-multiselect#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

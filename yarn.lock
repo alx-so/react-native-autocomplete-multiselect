@@ -11604,9 +11604,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-autocomplete-select-example@workspace:example":
+"react-native-autocomplete-multiselect-example@workspace:example":
   version: 0.0.0-use.local
-  resolution: "react-native-autocomplete-select-example@workspace:example"
+  resolution: "react-native-autocomplete-multiselect-example@workspace:example"
   dependencies:
     "@babel/core": ^7.20.0
     "@expo/metro-runtime": ~4.0.0
@@ -11620,9 +11620,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-autocomplete-select@workspace:.":
+"react-native-autocomplete-multiselect@workspace:.":
   version: 0.0.0-use.local
-  resolution: "react-native-autocomplete-select@workspace:."
+  resolution: "react-native-autocomplete-multiselect@workspace:."
   dependencies:
     "@commitlint/config-conventional": ^17.0.2
     "@evilmartians/lefthook": ^1.5.0
