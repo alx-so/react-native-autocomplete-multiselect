@@ -10,7 +10,7 @@ import {
   type TextInputKeyPressEventData,
 } from 'react-native';
 
-export const AutoCompleteInput = () => {
+export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const prevInputValue = React.useRef<string>('');
   const inputValue = React.useRef<string>('');
@@ -20,15 +20,6 @@ export const AutoCompleteInput = () => {
     ev: NativeSyntheticEvent<TextInputChangeEventData>
   ) => {
     inputValue.current = ev.nativeEvent.text;
-  };
-
-  const handleEndEditing = () => {
-    if (inputValue.current.length > 0) {
-      setInputValues([...inputValuesList, inputValue.current]);
-      inputValue.current = '';
-      prevInputValue.current = '';
-      inputRef.current?.clear();
-    }
   };
 
   const removeItem = (index: number) => {
@@ -55,6 +46,15 @@ export const AutoCompleteInput = () => {
     prevInputValue.current = inputValue.current;
   };
 
+  const handleSubmitEditing = () => {
+    if (inputValue.current.length > 0) {
+      setInputValues([...inputValuesList, inputValue.current]);
+      inputValue.current = '';
+      prevInputValue.current = '';
+      inputRef.current?.clear();
+    }
+  };
+
   return (
     <View style={styles.container}>
       {inputValuesList.map((item, index) => (
@@ -64,11 +64,12 @@ export const AutoCompleteInput = () => {
       ))}
 
       <TextInput
+        submitBehavior={props.blurOnSubmit ? 'blurAndSubmit' : 'submit'}
         ref={inputRef}
         style={styles.input}
         onChange={handleTextChange}
-        onEndEditing={handleEndEditing}
         onKeyPress={handleKeyPress}
+        onSubmitEditing={handleSubmitEditing}
       />
     </View>
   );
@@ -101,3 +102,9 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 });
+
+interface AutoCompleteInputProps {
+  blurOnSubmit?: boolean;
+}
+
+type AutoCompleteInputComponent = React.FC<AutoCompleteInputProps>;

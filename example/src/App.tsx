@@ -4,7 +4,7 @@ import { AutoComplete } from 'react-native-autocomplete-select';
 export default function App() {
   return (
     <View style={styles.container}>
-      <AutoComplete />
+      <AutoComplete blurOnSubmit={false} />
     </View>
   );
 }
