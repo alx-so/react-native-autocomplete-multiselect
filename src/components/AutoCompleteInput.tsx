@@ -52,6 +52,8 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
       inputValue.current = '';
       prevInputValue.current = '';
       inputRef.current?.clear();
+    } else {
+      inputRef.current?.blur();
     }
   };
 
