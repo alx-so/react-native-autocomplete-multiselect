@@ -1,21 +1,22 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 
-const defaultSize = 40;
+const defaultSize = 16;
 
 const CrossIcon: CrossIconComponent = (props) => {
   const size = props.size || defaultProps.size;
   const sizeStyle = { width: size, height: size };
 
   return (
-    <View style={[styles.cross, sizeStyle]}>
+    <Pressable style={[styles.cross, sizeStyle]}>
       <View style={[styles.line, styles.line1]} />
       <View style={[styles.line, styles.line2]} />
-    </View>
+    </Pressable>
   );
 };
 
 interface CrossIconProps {
   size?: number;
+  onPress?: () => void;
 }
 
 type CrossIconComponent = React.FC<CrossIconProps>;
