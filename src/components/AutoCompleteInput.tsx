@@ -3,12 +3,11 @@ import {
   TextInput,
   StyleSheet,
   View,
-  Text,
   type NativeSyntheticEvent,
   type TextInputChangeEventData,
-  Pressable,
   type TextInputKeyPressEventData,
 } from 'react-native';
+import { Tag } from './Tag';
 
 export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
@@ -60,9 +59,9 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   return (
     <View style={styles.container}>
       {inputValuesList.map((item, index) => (
-        <Pressable key={index} onPress={() => handleItemPress(index)}>
-          <Text style={styles.item}>{item}</Text>
-        </Pressable>
+        <Tag key={index} onPress={() => handleItemPress(index)}>
+          {item}
+        </Tag>
       ))}
 
       <TextInput
