@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 
 const defaultSize = 40;
 
-const CrossIcon: CrossIconType = (props) => {
+const CrossIcon: CrossIconComponent = (props) => {
   const size = props.size || defaultProps.size;
   const sizeStyle = { width: size, height: size };
 
@@ -18,7 +18,7 @@ interface CrossIconProps {
   size?: number;
 }
 
-type CrossIconType = React.FC<CrossIconProps>;
+type CrossIconComponent = React.FC<CrossIconProps>;
 
 const defaultProps: CrossIconProps = {
   size: defaultSize,
