@@ -6,25 +6,25 @@ export const Tag: TagComponent = (props) => {
   const isChildrenString =
     !React.isValidElement(props.children) && typeof props.children === 'string';
 
-  const isRemoveIconRight = props.removeIconProps?.position === 'right';
+  const isRemoveIconLeft = props.removeIconProps?.position === 'left';
 
   const tagStyles = [
     styles.tag,
     props.isRemoveIconVisible && styles.tagWithRemoveIcon,
-    isRemoveIconRight && styles.tagWithRemoveIconOnRight,
+    isRemoveIconLeft && styles.tagWithRemoveIconOnLeft,
   ];
 
-  const removeIconStyles = isRemoveIconRight
-    ? styles.removeIconRight
-    : styles.removeIconLeft;
+  const removeIconStyles = isRemoveIconLeft
+    ? styles.removeIconLeft
+    : styles.removeIconRight;
 
   return (
     <Pressable onPress={props.onPress} style={tagStyles} testID={props.testID}>
+      {isChildrenString ? <Text>{props.children}</Text> : <>{props.children}</>}
+
       {props.isRemoveIconVisible && (
         <CrossIcon {...props.removeIconProps} styles={removeIconStyles} />
       )}
-
-      {isChildrenString ? <Text>{props.children}</Text> : <>{props.children}</>}
     </Pressable>
   );
 };
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  tagWithRemoveIconOnRight: {
+  tagWithRemoveIconOnLeft: {
     flexDirection: 'row-reverse',
   },
   removeIconLeft: {
