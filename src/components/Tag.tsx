@@ -19,7 +19,7 @@ export const Tag: TagComponent = (props) => {
     : styles.removeIconLeft;
 
   return (
-    <Pressable onPress={props.onPress} style={tagStyles}>
+    <Pressable onPress={props.onPress} style={tagStyles} testID={props.testID}>
       {props.isRemoveIconVisible && (
         <CrossIcon {...props.removeIconProps} styles={removeIconStyles} />
       )}
@@ -30,6 +30,7 @@ export const Tag: TagComponent = (props) => {
 };
 
 interface TagProps {
+  testID?: string;
   isRemoveIconVisible?: boolean;
   removeIconProps?: RemoveIconProps;
   children: React.ReactNode;
