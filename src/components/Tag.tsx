@@ -1,15 +1,44 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
+import CrossIcon from './CrossIcon';
+import React from 'react';
 
 export const Tag: TagComponent = (props) => {
+  const isChildrenString =
+    !React.isValidElement(props.children) && typeof props.children === 'string';
+
+  const isRemoveIconRight = props.removeIconProps?.position === 'right';
+
+  const tagStyles = [
+    styles.tag,
+    props.isRemoveIconVisible && styles.tagWithRemoveIcon,
+    isRemoveIconRight && styles.tagWithRemoveIconOnRight,
+  ];
+
+  const removeIconStyles = isRemoveIconRight
+    ? styles.removeIconRight
+    : styles.removeIconLeft;
+
   return (
-    <Pressable onPress={props.onPress} style={styles.tag}>
-      <Text style={styles.tagText}>{props.children}</Text>
+    <Pressable onPress={props.onPress} style={tagStyles}>
+      {props.isRemoveIconVisible && (
+        <CrossIcon {...props.removeIconProps} styles={removeIconStyles} />
+      )}
+
+      {isChildrenString ? <Text>{props.children}</Text> : <>{props.children}</>}
     </Pressable>
   );
 };
 
 interface TagProps {
+  isRemoveIconVisible?: boolean;
+  removeIconProps?: RemoveIconProps;
   children: React.ReactNode;
+  onPress?: () => void;
+}
+
+interface RemoveIconProps {
+  position?: 'left' | 'right';
+  size?: number;
   onPress?: () => void;
 }
 
@@ -23,7 +52,18 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderWidth: 1,
   },
-  tagText: {
-    color: '#333',
+  tagWithRemoveIcon: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tagWithRemoveIconOnRight: {
+    flexDirection: 'row-reverse',
+  },
+  removeIconLeft: {
+    marginRight: 8,
+  },
+  removeIconRight: {
+    marginLeft: 8,
   },
 });
