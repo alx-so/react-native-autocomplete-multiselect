@@ -7,7 +7,7 @@ import {
   type TextInputKeyPressEventData,
   Alert,
 } from 'react-native';
-import { Tag } from './Tag';
+import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
 import type { ISettings } from '../types/settings';
 
@@ -113,20 +113,21 @@ export const Input: InputComponent = (props) => {
 
   const renderTag = useCallback(
     (tag: string, index: number) => {
-      return (
-        <Tag
-          key={index}
-          isRemoveIconVisible
-          removeIconProps={{
+      const other: TagRemoveIconProps = props.showRemoveButton
+        ? {
+            isVisible: true,
             onPress: () => handleTagRemoveIconPress(index),
-          }}
-        >
+          }
+        : {};
+
+      return (
+        <Tag key={index} removeIconProps={other}>
           {tag}
         </Tag>
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tagsList]
+    [props.showRemoveButton, tagsList]
   );
 
   return (
