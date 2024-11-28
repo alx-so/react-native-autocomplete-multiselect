@@ -3,10 +3,7 @@ import { defaultSettings } from './defaultSettings';
 import type { ISettings } from './types/settings';
 
 export const AutoComplete = (settings: ISettings = defaultSettings) => {
-  return (
-    <Input
-      blurOnSubmit={settings.blurOnSubmit}
-      tagBackspaceDeleteBehavior={settings.tagBackspaceDeleteBehavior}
-    />
-  );
+  settings = { ...defaultSettings, ...settings };
+
+  return <Input {...settings} />;
 };
