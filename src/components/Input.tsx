@@ -5,6 +5,7 @@ import {
   View,
   type NativeSyntheticEvent,
   type TextInputKeyPressEventData,
+  Alert,
 } from 'react-native';
 import { Tag } from './Tag';
 import { TagListMemoized } from './TagList';
@@ -19,13 +20,17 @@ export const Input: InputComponent = (props) => {
     setInputValue(text);
   };
 
-  const removeItem = (index: number) => {
+  const removeTag = (index: number) => {
     const newItems = tagsList.filter((_, i) => i !== index);
     setInputValues(newItems);
   };
 
-  const handleItemPress = (index: number) => {
-    removeItem(index);
+  const handleTagRemoveIconPress = (index: number) => {
+    if (props.confirmTagDelete) {
+      return removeTagAfterConfirm(index);
+    }
+
+    removeTag(index);
   };
 
   const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -45,9 +50,7 @@ export const Input: InputComponent = (props) => {
   const handleBackspacePress = () => {
     const _isCurrentInputEmpty = isCurrentInputEmpty();
 
-    if (_isCurrentInputEmpty) {
-      removeLastTagAndSetInputValue();
-    }
+    if (_isCurrentInputEmpty) handleRemoveTag();
   };
 
   const isCurrentInputEmpty = () => inputValue.length === 0;
@@ -58,6 +61,20 @@ export const Input: InputComponent = (props) => {
     return key === 'Backspace';
   };
 
+  const handleRemoveTag = () => {
+    switch (props.tagBackspaceDeleteBehavior) {
+      case 'delete':
+        removeLastTag();
+        break;
+      case 'delete-modify':
+        removeLastTagAndSetInputValue();
+        break;
+      case 'delete-confirm':
+        removeTagAfterConfirm(getLastTagIndex());
+        break;
+    }
+  };
+
   const removeLastTag = () => {
     if (tagsList.length === 0) return;
 
@@ -66,13 +83,33 @@ export const Input: InputComponent = (props) => {
   };
 
   const removeLastTagAndSetInputValue = () => {
-    const lastItem = tagsList[tagsList.length - 1];
+    const lastTag = getLastTag();
     removeLastTag();
 
-    if (lastItem) {
-      setInputValue(lastItem);
+    if (lastTag) {
+      setInputValue(lastTag);
     }
   };
+
+  const removeTagAfterConfirm = (tagIndex: number) => {
+    const handlePress = () => removeTag(tagIndex);
+
+    // TODO: localize the default alert message
+    Alert.alert('Are you sure?', 'Do you want to the tag?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: handlePress,
+      },
+    ]);
+  };
+
+  const getLastTagIndex = () => tagsList.length - 1;
+
+  const getLastTag = () => tagsList[getLastTagIndex()];
 
   const renderTag = useCallback(
     (tag: string, index: number) => {
@@ -81,7 +118,7 @@ export const Input: InputComponent = (props) => {
           key={index}
           isRemoveIconVisible
           removeIconProps={{
-            onPress: () => handleItemPress(index),
+            onPress: () => handleTagRemoveIconPress(index),
           }}
         >
           {tag}
