@@ -19,4 +19,11 @@ export interface ISettings {
    * Use system alert to confirm tag deletion.
    */
   confirmTagDelete?: boolean;
+
+  /**
+   * TODO: provide a way to customize the remove button.
+   *
+   * Show a remove button(X) on each tag.
+   */
+  showRemoveButton?: boolean;
 }
