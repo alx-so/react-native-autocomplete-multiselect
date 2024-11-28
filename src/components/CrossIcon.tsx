@@ -1,10 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { View, StyleSheet, Pressable, type StyleProp, type ViewStyle } from 'react-native';
 
 const defaultSize = 16;
 
@@ -13,10 +7,7 @@ const CrossIcon: CrossIconComponent = (props) => {
   const sizeStyle = { width: size, height: size };
 
   return (
-    <Pressable
-      style={[styles.cross, sizeStyle, props.styles]}
-      onPress={props.onPress}
-    >
+    <Pressable style={[styles.cross, sizeStyle, props.styles]} onPress={props.onPress}>
       <View style={[styles.line, styles.line1]} />
       <View style={[styles.line, styles.line2]} />
     </Pressable>
