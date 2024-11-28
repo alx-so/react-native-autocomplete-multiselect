@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Tag } from './Tag';
 import { TagListMemoized } from './TagList';
+import type { ISettings } from '../types/settings';
 
 export const Input: InputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
@@ -136,8 +137,8 @@ const styles = StyleSheet.create({
   },
 });
 
-interface InputProps {
-  blurOnSubmit?: boolean;
+interface InputProps extends ISettings {
+  // TODO: implement props
 }
 
 type InputComponent = React.FC<InputProps>;
