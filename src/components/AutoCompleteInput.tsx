@@ -15,9 +15,7 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   const inputValue = React.useRef<string>('');
   const [inputValuesList, setInputValues] = React.useState<string[]>([]);
 
-  const handleTextChange = (
-    ev: NativeSyntheticEvent<TextInputChangeEventData>
-  ) => {
+  const handleTextChange = (ev: NativeSyntheticEvent<TextInputChangeEventData>) => {
     inputValue.current = ev.nativeEvent.text;
   };
 
@@ -30,16 +28,12 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
     removeItem(index);
   };
 
-  const handleKeyPress = (
-    ev: NativeSyntheticEvent<TextInputKeyPressEventData>
-  ) => {
-    if (
-      ev.nativeEvent.key === 'Backspace' &&
-      prevInputValue.current.length === 0 &&
-      inputValuesList.length > 0
-    ) {
-      const newItems = inputValuesList.slice(0, -1);
-      setInputValues(newItems);
+  const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    const canRemoveLastItem =
+      isPressedKeyBackspace(ev) && isPrevInputEmpty() && isCurrentInputEmpty();
+
+    if (canRemoveLastItem) {
+      removeLastItem();
     }
 
     prevInputValue.current = inputValue.current;
@@ -56,10 +50,46 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
     }
   };
 
+  const isPrevInputEmpty = () => prevInputValue.current.length === 0;
+
+  const isCurrentInputEmpty = () => inputValue.current.length === 0;
+
+  const isPressedKeyBackspace = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    const key = ev.nativeEvent.key;
+
+    return key === 'Backspace';
+  };
+
+  const removeLastItem = () => {
+    if (inputValuesList.length === 0) return;
+
+    const lastItem = inputValuesList[inputValuesList.length - 1];
+
+    const newItems = inputValuesList.slice(0, -1);
+    setInputValues(newItems);
+
+    if (lastItem) {
+      setCurretInputValue(lastItem);
+    }
+  };
+
+  const setCurretInputValue = (value: string) => {
+    console.log('setCurretInputValue', value);
+    inputValue.current = value;
+  };
+
+  console.log('inputValue.current', inputValue.current);
+
   return (
     <View style={styles.container}>
       {inputValuesList.map((item, index) => (
-        <Tag key={index} onPress={() => handleItemPress(index)}>
+        <Tag
+          key={index}
+          isRemoveIconVisible
+          removeIconProps={{
+            onPress: () => handleItemPress(index),
+          }}
+        >
           {item}
         </Tag>
       ))}
