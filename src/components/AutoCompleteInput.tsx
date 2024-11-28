@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   TextInput,
   StyleSheet,
   View,
   type NativeSyntheticEvent,
-  type TextInputChangeEventData,
   type TextInputKeyPressEventData,
 } from 'react-native';
 import { Tag } from './Tag';
+import { TagListMemoized } from './TagList';
 
 export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
-  const prevInputValue = React.useRef<string>('');
-  const inputValue = React.useRef<string>('');
-  const [inputValuesList, setInputValues] = React.useState<string[]>([]);
+  const [inputValue, setInputValue] = React.useState<string>('');
+  const [tagsList, setInputValues] = React.useState<string[]>([]);
 
-  const handleTextChange = (ev: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    inputValue.current = ev.nativeEvent.text;
+  const handleTextChange = (text: string) => {
+    setInputValue(text);
   };
 
   const removeItem = (index: number) => {
-    const newItems = inputValuesList.filter((_, i) => i !== index);
+    const newItems = tagsList.filter((_, i) => i !== index);
     setInputValues(newItems);
   };
 
@@ -29,30 +28,28 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
   };
 
   const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-    const canRemoveLastItem =
-      isPressedKeyBackspace(ev) && isPrevInputEmpty() && isCurrentInputEmpty();
-
-    if (canRemoveLastItem) {
-      removeLastItem();
-    }
-
-    prevInputValue.current = inputValue.current;
+    const _isPressedKeyBackspace = isPressedKeyBackspace(ev);
+    if (_isPressedKeyBackspace) handleBackspacePress();
   };
 
   const handleSubmitEditing = () => {
-    if (inputValue.current.length > 0) {
-      setInputValues([...inputValuesList, inputValue.current]);
-      inputValue.current = '';
-      prevInputValue.current = '';
-      inputRef.current?.clear();
+    if (inputValue.length > 0) {
+      setInputValues([...tagsList, inputValue]);
+      setInputValue('');
     } else {
       inputRef.current?.blur();
     }
   };
 
-  const isPrevInputEmpty = () => prevInputValue.current.length === 0;
+  const handleBackspacePress = () => {
+    const _isCurrentInputEmpty = isCurrentInputEmpty();
 
-  const isCurrentInputEmpty = () => inputValue.current.length === 0;
+    if (_isCurrentInputEmpty) {
+      removeLastTagAndSetInputValue();
+    }
+  };
+
+  const isCurrentInputEmpty = () => inputValue.length === 0;
 
   const isPressedKeyBackspace = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     const key = ev.nativeEvent.key;
@@ -60,29 +57,25 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
     return key === 'Backspace';
   };
 
-  const removeLastItem = () => {
-    if (inputValuesList.length === 0) return;
+  const removeLastTag = () => {
+    if (tagsList.length === 0) return;
 
-    const lastItem = inputValuesList[inputValuesList.length - 1];
-
-    const newItems = inputValuesList.slice(0, -1);
+    const newItems = tagsList.slice(0, -1);
     setInputValues(newItems);
+  };
+
+  const removeLastTagAndSetInputValue = () => {
+    const lastItem = tagsList[tagsList.length - 1];
+    removeLastTag();
 
     if (lastItem) {
-      setCurretInputValue(lastItem);
+      setInputValue(lastItem);
     }
   };
 
-  const setCurretInputValue = (value: string) => {
-    console.log('setCurretInputValue', value);
-    inputValue.current = value;
-  };
-
-  console.log('inputValue.current', inputValue.current);
-
-  return (
-    <View style={styles.container}>
-      {inputValuesList.map((item, index) => (
+  const renderTag = useCallback(
+    (tag: string, index: number) => {
+      return (
         <Tag
           key={index}
           isRemoveIconVisible
@@ -90,15 +83,24 @@ export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
             onPress: () => handleItemPress(index),
           }}
         >
-          {item}
+          {tag}
         </Tag>
-      ))}
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tagsList]
+  );
+
+  return (
+    <View style={styles.container}>
+      <TagListMemoized tags={tagsList} render={renderTag} />
 
       <TextInput
+        value={inputValue}
         submitBehavior={props.blurOnSubmit ? 'blurAndSubmit' : 'submit'}
         ref={inputRef}
         style={styles.input}
-        onChange={handleTextChange}
+        onChangeText={handleTextChange}
         onKeyPress={handleKeyPress}
         onSubmitEditing={handleSubmitEditing}
       />
