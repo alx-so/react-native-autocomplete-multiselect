@@ -9,7 +9,7 @@ import {
 import { Tag } from './Tag';
 import { TagListMemoized } from './TagList';
 
-export const AutoCompleteInput: AutoCompleteInputComponent = (props) => {
+export const Input: InputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const [inputValue, setInputValue] = React.useState<string>('');
   const [tagsList, setInputValues] = React.useState<string[]>([]);
@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
   },
 });
 
-interface AutoCompleteInputProps {
+interface InputProps {
   blurOnSubmit?: boolean;
 }
 
-type AutoCompleteInputComponent = React.FC<AutoCompleteInputProps>;
+type InputComponent = React.FC<InputProps>;

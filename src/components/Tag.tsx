@@ -14,9 +14,7 @@ export const Tag: TagComponent = (props) => {
     isRemoveIconLeft && styles.tagWithRemoveIconOnLeft,
   ];
 
-  const removeIconStyles = isRemoveIconLeft
-    ? styles.removeIconLeft
-    : styles.removeIconRight;
+  const removeIconStyles = isRemoveIconLeft ? styles.removeIconLeft : styles.removeIconRight;
 
   return (
     <Pressable onPress={props.onPress} style={tagStyles} testID={props.testID}>
