@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
     marginRight: 8,
+    marginBottom: 4,
     borderWidth: 1,
   },
   tagWithRemoveIcon: {
