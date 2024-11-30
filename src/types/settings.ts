@@ -1,4 +1,7 @@
 export interface ISettings {
+  /**
+   * @default true
+   */
   blurOnSubmit?: boolean;
 
   /**
