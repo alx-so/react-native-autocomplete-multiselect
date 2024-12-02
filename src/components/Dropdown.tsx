@@ -10,15 +10,12 @@ import {
 } from 'react-native';
 import { Position } from '../types/common';
 
+// TODO: make ajustable
 const requiredDropdownHeight = 200;
 
 export const Dropdown: DropdownComponent = (props) => {
   const deviceDimensions = useWindowDimensions();
-
-  const position =
-    props.containerRect.y + requiredDropdownHeight < deviceDimensions.height
-      ? Position.Bottom
-      : Position.Top;
+  const position = calcDropdownPosition(props.containerRect, deviceDimensions.height);
   const containerStyle = getContainerStylePosition(position, props.containerRect.height);
 
   return (
@@ -59,4 +56,10 @@ const getContainerStylePosition = (
     top: pos === 'top' ? 'auto' : containerHeight,
     bottom: pos === 'top' ? containerHeight : 'auto',
   };
+};
+
+const calcDropdownPosition = (rect: LayoutRectangle, windowHeight: number) => {
+  const position = rect.y + requiredDropdownHeight < windowHeight ? Position.Bottom : Position.Top;
+
+  return position;
 };
