@@ -18,6 +18,8 @@ export const Input: InputComponent = (props) => {
 
   const handleTextChange = (text: string) => {
     setInputValue(text);
+
+    props.onChangeText?.(text);
   };
 
   const removeTag = (index: number) => {
@@ -147,6 +149,8 @@ export const Input: InputComponent = (props) => {
   );
 };
 
+export const InputMemoized = React.memo(Input);
+
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
 });
 
 interface InputProps extends ISettings {
-  // TODO: implement props
+  onChangeText?: (text: string) => void;
 }
 
 type InputComponent = React.FC<InputProps>;
