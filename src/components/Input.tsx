@@ -142,6 +142,7 @@ export const Input: InputComponent = (props) => {
       <TagListMemoized tags={tagsList} render={renderTag} />
 
       <TextInput
+        editable={!props.disabled}
         value={inputValue}
         submitBehavior={props.blurOnSubmit ? 'blurAndSubmit' : 'submit'}
         ref={inputRef}
