@@ -1,4 +1,4 @@
-export interface ISettings {
+export interface Settings {
   /**
    * @default true
    */

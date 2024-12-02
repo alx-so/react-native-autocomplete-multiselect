@@ -1,12 +1,12 @@
 import { type LayoutRectangle, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import { InputMemoized } from './components/Input';
 import { defaultSettings } from './defaultSettings';
-import type { ISettings } from './types/settings';
+import type { Settings } from './types/settings';
 import { Dropdown } from './components/Dropdown';
 import React from 'react';
 import { defaultLayloutRect, getTestSearchItems, mergeSettings } from './utils';
 
-export const AutoComplete = (settings: ISettings = defaultSettings) => {
+export const AutoComplete = (settings: Settings = defaultSettings) => {
   const containerRef = React.useRef<View>(null);
   const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
   // const [inputValue, setInputValue] = React.useState<string>('');

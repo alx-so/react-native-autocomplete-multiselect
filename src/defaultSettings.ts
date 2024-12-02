@@ -1,6 +1,6 @@
-import type { ISettings } from './types/settings';
+import type { Settings } from './types/settings';
 
-export const defaultSettings: ISettings = {
+export const defaultSettings: Settings = {
   blurOnSubmit: true,
   tagBackspaceDeleteBehavior: 'delete-modify',
   confirmTagDelete: false,

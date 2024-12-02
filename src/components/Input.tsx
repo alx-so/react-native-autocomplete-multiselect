@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
-import type { ISettings } from '../types/settings';
+import type { Settings } from '../types/settings';
 
 export const Input: InputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface InputProps extends ISettings {
+interface InputProps extends Settings {
   onChangeText?: (text: string) => void;
 }
 
