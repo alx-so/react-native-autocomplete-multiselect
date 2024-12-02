@@ -7,7 +7,11 @@ const CrossIcon: CrossIconComponent = (props) => {
   const sizeStyle = { width: size, height: size };
 
   return (
-    <Pressable style={[styles.cross, sizeStyle, props.styles]} onPress={props.onPress}>
+    <Pressable
+      disabled={props.disabled}
+      style={[styles.cross, sizeStyle, props.styles]}
+      onPress={props.onPress}
+    >
       <View style={[styles.line, styles.line1]} />
       <View style={[styles.line, styles.line2]} />
     </Pressable>
@@ -15,6 +19,7 @@ const CrossIcon: CrossIconComponent = (props) => {
 };
 
 interface CrossIconProps {
+  disabled?: boolean;
   styles?: StyleProp<ViewStyle>;
   size?: number;
   onPress?: () => void;
