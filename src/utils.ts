@@ -1,10 +1,8 @@
-import type { ComponentDimensions } from './types/common';
+import type { LayoutRectangle } from 'react-native';
 
-export const defaultComponentDimensions: ComponentDimensions = {
+export const defaultLayloutRect: LayoutRectangle = {
   x: 0,
   y: 0,
-  pageX: 0,
-  pageY: 0,
   width: 0,
   height: 0,
 };

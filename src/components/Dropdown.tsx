@@ -1,12 +1,25 @@
-import { ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import type { ContainerDimensions } from 'react-native-autocomplete-multiselect';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+  useWindowDimensions,
+  type LayoutRectangle,
+} from 'react-native';
 import { Position } from '../types/common';
 
+const requiredDropdownHeight = 200;
+
 export const Dropdown: DropdownComponent = (props) => {
-  const containerStyle = getContainerStylePosition(
-    props.position || Position.Bottom,
-    props.containerDimensions.height
-  );
+  const deviceDimensions = useWindowDimensions();
+
+  const position =
+    props.containerRect.y + requiredDropdownHeight < deviceDimensions.height
+      ? Position.Bottom
+      : Position.Top;
+  const containerStyle = getContainerStylePosition(position, props.containerRect.height);
 
   return (
     <View style={[styles.dropdown, containerStyle]}>
@@ -23,8 +36,7 @@ export const Dropdown: DropdownComponent = (props) => {
 
 interface DropdownProps {
   items: string[];
-  position?: DropdownPosition;
-  containerDimensions: ContainerDimensions;
+  containerRect: LayoutRectangle;
 }
 
 type DropdownComponent = React.FC<DropdownProps>;
