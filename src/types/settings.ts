@@ -36,4 +36,6 @@ export interface Settings {
    * Initial list of items that will be display as tags in the input.
    */
   items?: TagItem[];
+
+  disabled?: boolean;
 }
