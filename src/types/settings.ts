@@ -1,3 +1,5 @@
+import type { TagItem } from './common';
+
 export interface Settings {
   /**
    * @default true
@@ -29,4 +31,9 @@ export interface Settings {
    * Show a remove button(X) on each tag.
    */
   showRemoveButton?: boolean;
+
+  /**
+   * Initial list of items that will be display as tags in the input.
+   */
+  items?: TagItem[];
 }

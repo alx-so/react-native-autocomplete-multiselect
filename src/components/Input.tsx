@@ -10,11 +10,13 @@ import {
 import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
 import type { Settings } from '../types/settings';
+import type { TagItem } from '../types/common';
 
 export const Input: InputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const [inputValue, setInputValue] = React.useState<string>('');
-  const [tagsList, setInputValues] = React.useState<string[]>([]);
+  const [tagsList, setInputTags] = React.useState<TagItem[]>(props.items ?? []);
+  const newTagBaseId = React.useId();
 
   const handleTextChange = (text: string) => {
     setInputValue(text);
@@ -24,7 +26,7 @@ export const Input: InputComponent = (props) => {
 
   const removeTag = (index: number) => {
     const newItems = tagsList.filter((_, i) => i !== index);
-    setInputValues(newItems);
+    setInputTags(newItems);
   };
 
   const handleTagRemoveIconPress = (index: number) => {
@@ -42,7 +44,10 @@ export const Input: InputComponent = (props) => {
 
   const handleSubmitEditing = () => {
     if (inputValue.length > 0) {
-      setInputValues([...tagsList, inputValue]);
+      const id = `${newTagBaseId}-${tagsList.length}`;
+      const label = inputValue;
+
+      setInputTags([...tagsList, { id, label }]);
       setInputValue('');
     } else {
       inputRef.current?.blur();
@@ -81,7 +86,7 @@ export const Input: InputComponent = (props) => {
     if (tagsList.length === 0) return;
 
     const newItems = tagsList.slice(0, -1);
-    setInputValues(newItems);
+    setInputTags(newItems);
   };
 
   const removeLastTagAndSetInputValue = () => {
@@ -89,7 +94,7 @@ export const Input: InputComponent = (props) => {
     removeLastTag();
 
     if (lastTag) {
-      setInputValue(lastTag);
+      setInputValue(lastTag.label);
     }
   };
 
@@ -114,7 +119,7 @@ export const Input: InputComponent = (props) => {
   const getLastTag = () => tagsList[getLastTagIndex()];
 
   const renderTag = useCallback(
-    (tag: string, index: number) => {
+    (tag: TagItem, index: number) => {
       const other: TagRemoveIconProps = props.showRemoveButton
         ? {
             isVisible: true,
@@ -124,7 +129,7 @@ export const Input: InputComponent = (props) => {
 
       return (
         <Tag key={index} removeIconProps={other}>
-          {tag}
+          {tag.label}
         </Tag>
       );
     },
