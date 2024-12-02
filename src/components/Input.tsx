@@ -128,7 +128,7 @@ export const Input: InputComponent = (props) => {
         : {};
 
       return (
-        <Tag key={tag.id} removeIconProps={other}>
+        <Tag key={tag.id} removeIconProps={other} disabled={tag.disabled}>
           {tag.label}
         </Tag>
       );
