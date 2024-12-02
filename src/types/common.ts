@@ -8,4 +8,5 @@ export enum Position {
 export interface TagItem {
   id: string | number;
   label: string;
+  disabled?: boolean;
 }
