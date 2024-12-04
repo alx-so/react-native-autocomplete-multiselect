@@ -1,7 +1,6 @@
 import {
   ScrollView,
   StyleSheet,
-  Text,
   View,
   type StyleProp,
   type ViewStyle,
@@ -9,6 +8,8 @@ import {
   type LayoutRectangle,
 } from 'react-native';
 import { Position } from '../types/common';
+import { composePartialTextNode } from '../common/composePartialTextNode';
+import { MATCH_TAG_END, MATCH_TAG_START } from '../constants';
 
 // TODO: make ajustable
 const requiredDropdownHeight = 200;
@@ -21,9 +22,13 @@ export const Dropdown: DropdownComponent = (props) => {
   return (
     <View style={[styles.dropdown, containerStyle]}>
       <ScrollView>
-        {props.items.map((item, index) => (
-          <View key={index}>
-            <Text>{item}</Text>
+        {props.items.map((item) => (
+          <View key={item.id}>
+            {composePartialTextNode(item.label, {
+              matchedTextNodeStyle: { fontWeight: 'bold' },
+              startStrPart: MATCH_TAG_START,
+              endStrPart: MATCH_TAG_END,
+            })}
           </View>
         ))}
       </ScrollView>
@@ -31,8 +36,13 @@ export const Dropdown: DropdownComponent = (props) => {
   );
 };
 
+interface Item {
+  id: string | number;
+  label: string;
+}
+
 interface DropdownProps {
-  items: string[];
+  items: Item[];
   containerRect: LayoutRectangle;
 }
 
