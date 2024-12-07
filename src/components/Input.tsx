@@ -13,28 +13,25 @@ import type { Settings } from '../types/settings';
 import type { TagItem } from '../types/common';
 
 export const Input: InputComponent = (props) => {
+  const tagsList = props.tags ?? [];
   const inputRef = React.useRef<TextInput>(null);
   const [inputValue, setInputValue] = React.useState<string>('');
-  const [tagsList, setInputTags] = React.useState<TagItem[]>(props.items ?? []);
   const newTagBaseId = React.useId();
 
   const handleTextChange = (text: string) => {
     setInputValue(text);
 
-    props.onChangeText?.(text);
+    props.onTextChange?.(text);
   };
 
-  const removeTag = (index: number) => {
-    const newItems = tagsList.filter((_, i) => i !== index);
-    setInputTags(newItems);
-  };
+  const removeTag = (tag: TagItem, index: number) => props.onTagRemove?.(tag, index);
 
-  const handleTagRemoveIconPress = (index: number) => {
+  const handleTagRemoveIconPress = (tag: TagItem, index: number) => {
     if (props.confirmTagDelete) {
-      return removeTagAfterConfirm(index);
+      return removeTagAfterConfirm(tag, index);
     }
 
-    removeTag(index);
+    removeTag(tag, index);
   };
 
   const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -47,7 +44,8 @@ export const Input: InputComponent = (props) => {
       const id = `${newTagBaseId}-${tagsList.length}`;
       const label = inputValue;
 
-      setInputTags([...tagsList, { id, label }]);
+      // setInputTags([...tagsList, { id, label }]);
+      props.onTagAdd?.({ id, label });
       setInputValue('');
     } else {
       inputRef.current?.blur();
@@ -77,7 +75,7 @@ export const Input: InputComponent = (props) => {
         removeLastTagAndSetInputValue();
         break;
       case 'delete-confirm':
-        removeTagAfterConfirm(getLastTagIndex());
+        removeTagAfterConfirm(tagsList[getLastTagIndex()] as TagItem, getLastTagIndex());
         break;
     }
   };
@@ -91,15 +89,15 @@ export const Input: InputComponent = (props) => {
 
   const removeLastTagAndSetInputValue = () => {
     const lastTag = getLastTag();
-    removeLastTag();
 
     if (lastTag) {
+      removeTag(lastTag, getLastTagIndex());
       setInputValue(lastTag.label);
     }
   };
 
-  const removeTagAfterConfirm = (tagIndex: number) => {
-    const handlePress = () => removeTag(tagIndex);
+  const removeTagAfterConfirm = (tag: TagItem, index: number) => {
+    const handlePress = () => removeTag(tag, index);
 
     // TODO: localize the default alert message
     Alert.alert('Are you sure?', 'Do you want to the tag?', [
@@ -123,7 +121,7 @@ export const Input: InputComponent = (props) => {
       const other: TagRemoveIconProps = props.showRemoveButton
         ? {
             isVisible: true,
-            onPress: () => handleTagRemoveIconPress(index),
+            onPress: () => handleTagRemoveIconPress(tag, index),
           }
         : {};
 
@@ -159,6 +157,7 @@ export const InputMemoized = React.memo(Input);
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: 54,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -170,23 +169,18 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   input: {
+    height: 40,
     flexGrow: 1,
     // margin: 0,
     marginLeft: 3,
-    padding: 0,
-  },
-  item: {
-    paddingVertical: 2,
-    paddingHorizontal: 4,
-    margin: 2,
-    borderWidth: 1,
-    borderColor: 'black',
-    color: 'red',
+    padding: 4,
   },
 });
 
 interface InputProps extends Settings {
-  onChangeText?: (text: string) => void;
+  onTextChange?: (text: string) => void;
+  onTagRemove?: (tag: TagItem, index: number) => void;
+  onTagAdd?: (tag: TagItem) => void;
 }
 
 type InputComponent = React.FC<InputProps>;
