@@ -1,4 +1,5 @@
 import type { LayoutRectangle } from 'react-native';
+import type { Item } from './types/common';
 
 export const defaultLayloutRect: LayoutRectangle = {
   x: 0,
@@ -11,7 +12,7 @@ export const mergeSettings = <T>(defaultSettings: T, settings: T): T => {
   return { ...defaultSettings, ...settings };
 };
 
-export const getTestSearchItems = () => {
+export const getTestSearchItems = (): Item[] => {
   const items = [
     {
       id: '1',

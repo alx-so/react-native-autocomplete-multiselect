@@ -20,6 +20,10 @@ export const composePartialTextNode = (str: string, opts: PartialTextNodeOpts) =
   );
 };
 
+export const removeTags = (str: string) => {
+  return str.replace(/<[^>]*>/g, '');
+};
+
 export interface PartialTextNodeOpts {
   startStrPart: string;
   endStrPart: string;
