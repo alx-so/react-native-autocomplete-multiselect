@@ -5,21 +5,22 @@ import type { Settings } from './types/settings';
 import { Dropdown } from './components/Dropdown';
 import React from 'react';
 import { defaultLayloutRect, getTestSearchItems, mergeSettings } from './utils';
-import { useSearch } from './hooks/useSearch';
+import { useSearch, type SearchItem } from './hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from './constants';
-const seatchItems = getTestSearchItems();
+import { Select } from './components/Select';
+import type { Item } from './types/common';
+import { removeTags } from './common/composePartialTextNode';
+const seatchItems = getTestSearchItems().sort((a, b) => a.label.localeCompare(b.label));
 
-export const AutoComplete = (settings: Settings = defaultSettings) => {
+export const AutoComplete = (settings: Settings) => {
   const containerRef = React.useRef<View>(null);
   const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
+  const [tags, setTags] = React.useState<Item[]>([]);
   const [items, setItems] = React.useState(seatchItems);
   const [, startItemsListTransition] = React.useTransition();
-  const inputSettingsProps = React.useMemo(
-    () => mergeSettings(defaultSettings, settings),
-    [settings]
-  );
+  settings = React.useMemo(() => mergeSettings(defaultSettings, settings), [settings]);
 
-  const { handleSearch } = useSearch(seatchItems, {
+  const { handleSearch } = useSearch(seatchItems as SearchItem[], {
     wrapMatch: {
       start: MATCH_TAG_START,
       end: MATCH_TAG_END,
@@ -37,14 +38,57 @@ export const AutoComplete = (settings: Settings = defaultSettings) => {
     });
   };
 
+  const handleItemPress = (item: Item) => {
+    const tag = { ...item, label: removeTags(item.label) };
+
+    const _items = items.filter((i) => i.id !== item.id);
+    const newSearchItems = seatchItems.filter((i) => i.id !== item.id);
+    seatchItems.length = 0;
+    seatchItems.push(...newSearchItems);
+
+    console.log('seatchItems', seatchItems.length);
+
+    setTags([...tags, tag]);
+    setItems([..._items]);
+  };
+
+  const handleTagRemove = (tag: Item) => {
+    const newTags = tags.filter((t) => t.id !== tag.id);
+    const newItems = [...items, tag].sort((a, b) => a.label.localeCompare(b.label));
+
+    seatchItems.push(tag);
+    seatchItems.sort((a, b) => a.label.localeCompare(b.label));
+
+    setTags(newTags);
+    setItems(newItems);
+  };
+
   return (
     <View style={styles.container} ref={containerRef} onLayout={handleContainerLayoutChange}>
-      <InputMemoized {...inputSettingsProps} onChangeText={handleInputChange} />
-      <Dropdown items={items} containerRect={containerRect} />
+      {settings.type === 'input' ? (
+        <InputMemoized
+          {...settings}
+          tags={tags}
+          onTextChange={handleInputChange}
+          onTagRemove={handleTagRemove}
+        />
+      ) : (
+        <Select {...settings} tags={tags} onTagRemove={handleTagRemove} />
+      )}
+      <Dropdown
+        items={items}
+        containerRect={containerRect}
+        isSearchVisible={settings.type === 'select' && settings.isSelectSearchVisible}
+        onSearchTextChange={handleInputChange}
+        onItemPress={handleItemPress}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
 });

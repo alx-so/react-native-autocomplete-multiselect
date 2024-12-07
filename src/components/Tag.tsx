@@ -52,6 +52,7 @@ type TagComponent = React.FC<TagProps>;
 
 const styles = StyleSheet.create({
   tag: {
+    height: 40,
     backgroundColor: '#f1f1f1',
     padding: 8,
     borderRadius: 4,
