@@ -1,15 +1,20 @@
 import type { TagItem } from './common';
 
+/**
+ * TODO: separate settings for input and select
+ */
 export interface Settings {
   /**
    * @default 'input'
    */
-  type: 'input' | 'select';
+  type?: 'input' | 'select';
 
   /**
    * @default true
    */
   blurOnSubmit?: boolean;
+
+  isSelectSearchVisible?: boolean;
 
   /**
    * The behavior tag deletion when the backspace key is pressed.
