@@ -5,8 +5,15 @@ export enum Position {
   Right = 'right',
 }
 
+export type PositionType = keyof typeof Position;
+
 export interface TagItem {
   id: string | number;
   label: string;
   disabled?: boolean;
+}
+
+export interface Item {
+  id: string | number;
+  label: string;
 }
