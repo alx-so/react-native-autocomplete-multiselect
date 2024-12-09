@@ -13,7 +13,7 @@ export interface TagItem {
   disabled?: boolean;
 }
 
-export interface Item {
+export interface DropdownItem {
   id: string | number;
   label: string;
 }

@@ -9,7 +9,7 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import { Position, type Item } from '../types/common';
+import { Position, type DropdownItem } from '../types/common';
 import { composePartialTextNode } from '../common/composePartialTextNode';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../constants';
 
@@ -21,7 +21,7 @@ export const Dropdown: DropdownComponent = (props) => {
   const position = calcDropdownPosition(props.containerRect, deviceDimensions.height);
   const containerStyle = getContainerStylePosition(position, props.containerRect.height);
 
-  const handleItemPress = (item: Item) => {
+  const handleItemPress = (item: DropdownItem) => {
     props.onItemPress?.(item);
   };
 
@@ -52,9 +52,9 @@ export const Dropdown: DropdownComponent = (props) => {
 interface DropdownProps {
   isSearchVisible?: boolean;
   onSearchTextChange?: (text: string) => void;
-  items: Item[];
+  items: DropdownItem[];
   containerRect: LayoutRectangle;
-  onItemPress?: (item: Item) => void;
+  onItemPress?: (item: DropdownItem) => void;
 }
 
 type DropdownComponent = React.FC<DropdownProps>;

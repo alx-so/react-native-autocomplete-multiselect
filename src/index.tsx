@@ -8,14 +8,14 @@ import { defaultLayloutRect, getTestSearchItems, mergeSettings } from './utils';
 import { useSearch, type SearchItem } from './hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from './constants';
 import { Select } from './components/Select';
-import type { Item } from './types/common';
+import type { DropdownItem } from './types/common';
 import { removeTags } from './common/composePartialTextNode';
 const seatchItems = getTestSearchItems().sort((a, b) => a.label.localeCompare(b.label));
 
 export const AutoComplete = (settings: Settings) => {
   const containerRef = React.useRef<View>(null);
   const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
-  const [tags, setTags] = React.useState<Item[]>([]);
+  const [tags, setTags] = React.useState<DropdownItem[]>([]);
   const [items, setItems] = React.useState(seatchItems);
   const [, startItemsListTransition] = React.useTransition();
   settings = React.useMemo(() => mergeSettings(defaultSettings, settings), [settings]);
@@ -38,7 +38,7 @@ export const AutoComplete = (settings: Settings) => {
     });
   };
 
-  const handleItemPress = (item: Item) => {
+  const handleItemPress = (item: DropdownItem) => {
     const tag = { ...item, label: removeTags(item.label) };
 
     const _items = items.filter((i) => i.id !== item.id);
@@ -50,7 +50,7 @@ export const AutoComplete = (settings: Settings) => {
     setItems([..._items]);
   };
 
-  const handleTagRemove = (tag: Item) => {
+  const handleTagRemove = (tag: DropdownItem) => {
     const newTags = tags.filter((t) => t.id !== tag.id);
     const newItems = [...items, tag].sort((a, b) => a.label.localeCompare(b.label));
 
@@ -61,7 +61,7 @@ export const AutoComplete = (settings: Settings) => {
     setItems(newItems);
   };
 
-  const handleTagAdd = (tag: Item) => {
+  const handleTagAdd = (tag: DropdownItem) => {
     setTags([...tags, tag]);
   };
 
