@@ -1,4 +1,10 @@
-import { type LayoutRectangle, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import {
+  type LayoutRectangle,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  Alert,
+} from 'react-native';
 import { InputMemoized } from './components/Input';
 import { defaultSettings } from './defaultSettings';
 import type { Settings } from './types/settings';
@@ -50,38 +56,76 @@ export const AutoComplete = (settings: Settings) => {
     setItems([..._items]);
   };
 
-  const handleTagRemove = (tag: DropdownItem) => {
+  const removeTag = (tag: TagItem) => {
     const newTags = tags.filter((t) => t.id !== tag.id);
+    setTags(newTags);
+
+    if (settings.type === 'input-select' || settings.type === 'select') {
+      restoreSearchItem(tag);
+    }
+  };
+
+  const restoreSearchItem = (tag: TagItem) => {
     const newItems = [...items, tag].sort((a, b) => a.label.localeCompare(b.label));
 
     seatchItems.push(tag);
     seatchItems.sort((a, b) => a.label.localeCompare(b.label));
-
-    setTags(newTags);
     setItems(newItems);
   };
 
-  const handleTagAdd = (tag: DropdownItem) => {
+  const handleTagAdd = (tag: TagItem) => {
     setTags([...tags, tag]);
   };
 
+  const handleRemoveTag = (tag: TagItem) => {
+    switch (settings.tagBackspaceDeleteBehavior) {
+      case 'delete':
+      case 'delete-modify':
+        removeTag(tag);
+        break;
+      case 'delete-confirm':
+        removeTagAfterConfirm(tag);
+        break;
+    }
+  };
+
+  const removeTagAfterConfirm = (tag: TagItem) => {
+    const handlePress = () => removeTag(tag);
+
+    // TODO: localize the default alert message
+    Alert.alert('Are you sure?', 'Do you want to the tag?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: handlePress,
+      },
+    ]);
+  };
+
+  const isInputComponent = settings.type === 'input' || settings.type === 'input-select';
+  const isDropdownSearchVisible = settings.type === 'select' && settings.isSelectSearchVisible;
+
   return (
     <View style={styles.container} ref={containerRef} onLayout={handleContainerLayoutChange}>
-      {settings.type === 'input' ? (
+      {isInputComponent ? (
         <InputMemoized
           {...settings}
           tags={tags}
           onTextChange={handleInputChange}
-          onTagRemove={handleTagRemove}
+          onTagRemove={handleRemoveTag}
           onTagAdd={handleTagAdd}
         />
       ) : (
-        <Select {...settings} tags={tags} onTagRemove={handleTagRemove} />
+        <Select {...settings} tags={tags} onTagRemove={handleRemoveTag} />
       )}
+
       <Dropdown
         items={items}
         containerRect={containerRect}
-        isSearchVisible={settings.type === 'select' && settings.isSelectSearchVisible}
+        isSearchVisible={isDropdownSearchVisible}
         onSearchTextChange={handleInputChange}
         onItemPress={handleItemPress}
       />

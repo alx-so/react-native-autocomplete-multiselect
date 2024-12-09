@@ -5,7 +5,6 @@ import {
   View,
   type NativeSyntheticEvent,
   type TextInputKeyPressEventData,
-  Alert,
 } from 'react-native';
 import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
@@ -24,14 +23,10 @@ export const Input: InputComponent = (props) => {
     props.onTextChange?.(text);
   };
 
-  const removeTag = (tag: TagItem, index: number) => props.onTagRemove?.(tag, index);
+  const removeTag = (tag: TagItem) => props.onTagRemove?.(tag);
 
-  const handleTagRemoveIconPress = (tag: TagItem, index: number) => {
-    if (props.confirmTagDelete) {
-      return removeTagAfterConfirm(tag, index);
-    }
-
-    removeTag(tag, index);
+  const handleTagRemoveIconPress = (tag: TagItem) => {
+    removeTag(tag);
   };
 
   const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -40,11 +35,12 @@ export const Input: InputComponent = (props) => {
   };
 
   const handleSubmitEditing = () => {
+    if (props.type === 'input-select') return;
+
     if (inputValue.length > 0) {
       const id = `${newTagBaseId}-${tagsList.length}`;
       const label = inputValue;
 
-      // setInputTags([...tagsList, { id, label }]);
       props.onTagAdd?.({ id, label });
       setInputValue('');
     } else {
@@ -55,7 +51,13 @@ export const Input: InputComponent = (props) => {
   const handleBackspacePress = () => {
     const _isCurrentInputEmpty = isCurrentInputEmpty();
 
-    if (_isCurrentInputEmpty) handleRemoveTag();
+    if (_isCurrentInputEmpty) {
+      if (props.tagBackspaceDeleteBehavior === 'delete-modify') {
+        removeLastTagAndSetInputValue();
+      } else {
+        removeLastTag();
+      }
+    }
   };
 
   const isCurrentInputEmpty = () => inputValue.length === 0;
@@ -66,27 +68,13 @@ export const Input: InputComponent = (props) => {
     return key === 'Backspace';
   };
 
-  const handleRemoveTag = () => {
-    switch (props.tagBackspaceDeleteBehavior) {
-      case 'delete':
-        removeLastTag();
-        break;
-      case 'delete-modify':
-        removeLastTagAndSetInputValue();
-        break;
-      case 'delete-confirm':
-        removeTagAfterConfirm(tagsList[getLastTagIndex()] as TagItem, getLastTagIndex());
-        break;
-    }
-  };
-
   const removeLastTag = () => {
     if (tagsList.length === 0) return;
 
     const lastTag = getLastTag();
 
     if (lastTag) {
-      removeTag(lastTag, getLastTagIndex());
+      removeTag(lastTag);
     }
   };
 
@@ -94,25 +82,9 @@ export const Input: InputComponent = (props) => {
     const lastTag = getLastTag();
 
     if (lastTag) {
-      removeTag(lastTag, getLastTagIndex());
+      removeTag(lastTag);
       setInputValue(lastTag.label);
     }
-  };
-
-  const removeTagAfterConfirm = (tag: TagItem, index: number) => {
-    const handlePress = () => removeTag(tag, index);
-
-    // TODO: localize the default alert message
-    Alert.alert('Are you sure?', 'Do you want to the tag?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'OK',
-        onPress: handlePress,
-      },
-    ]);
   };
 
   const getLastTagIndex = () => tagsList.length - 1;
@@ -120,11 +92,11 @@ export const Input: InputComponent = (props) => {
   const getLastTag = () => tagsList[getLastTagIndex()];
 
   const renderTag = useCallback(
-    (tag: TagItem, index: number) => {
+    (tag: TagItem) => {
       const other: TagRemoveIconProps = props.showRemoveButton
         ? {
             isVisible: true,
-            onPress: () => handleTagRemoveIconPress(tag, index),
+            onPress: () => handleTagRemoveIconPress(tag),
           }
         : {};
 
@@ -182,7 +154,7 @@ const styles = StyleSheet.create({
 
 interface InputProps extends Settings {
   onTextChange?: (text: string) => void;
-  onTagRemove?: (tag: TagItem, index: number) => void;
+  onTagRemove?: (tag: TagItem) => void;
   onTagAdd?: (tag: TagItem) => void;
 }
 

@@ -1,11 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  // type NativeSyntheticEvent,
-  // type TextInputKeyPressEventData,
-  Alert,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
 import type { Settings } from '../types/settings';
@@ -15,38 +9,18 @@ import ChevronIcon from './ChevronIcon';
 export const Select: InputComponent = (props) => {
   const tagsList = props.tags ?? [];
 
-  const removeTag = (tag: TagItem, index: number) => props.onTagRemove?.(tag, index);
+  const removeTag = (tag: TagItem) => props.onTagRemove?.(tag);
 
-  const handleTagRemoveIconPress = (tag: TagItem, index: number) => {
-    if (props.confirmTagDelete) {
-      return removeTagAfterConfirm(tag, index);
-    }
-
-    removeTag(tag, index);
-  };
-
-  const removeTagAfterConfirm = (tag: TagItem, index: number) => {
-    const handlePress = () => removeTag(tag, index);
-
-    // TODO: localize the default alert message
-    Alert.alert('Are you sure?', 'Do you want to the tag?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'OK',
-        onPress: handlePress,
-      },
-    ]);
+  const handleTagRemoveIconPress = (tag: TagItem) => {
+    removeTag(tag);
   };
 
   const renderTag = useCallback(
-    (tag: TagItem, index: number) => {
+    (tag: TagItem) => {
       const other: TagRemoveIconProps = props.showRemoveButton
         ? {
             isVisible: true,
-            onPress: () => handleTagRemoveIconPress(tag, index),
+            onPress: () => handleTagRemoveIconPress(tag),
           }
         : {};
 
@@ -89,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 interface InputProps extends Settings {
-  onTagRemove?: (tag: TagItem, index: number) => void;
+  onTagRemove?: (tag: TagItem) => void;
 }
 
 type InputComponent = React.FC<InputProps>;
