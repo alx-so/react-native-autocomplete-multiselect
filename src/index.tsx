@@ -8,14 +8,14 @@ import { defaultLayloutRect, getTestSearchItems, mergeSettings } from './utils';
 import { useSearch, type SearchItem } from './hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from './constants';
 import { Select } from './components/Select';
-import type { DropdownItem } from './types/common';
+import type { DropdownItem, TagItem } from './types/common';
 import { removeTags } from './common/composePartialTextNode';
 const seatchItems = getTestSearchItems().sort((a, b) => a.label.localeCompare(b.label));
 
 export const AutoComplete = (settings: Settings) => {
   const containerRef = React.useRef<View>(null);
   const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
-  const [tags, setTags] = React.useState<DropdownItem[]>([]);
+  const [tags, setTags] = React.useState<TagItem[]>([]);
   const [items, setItems] = React.useState(seatchItems);
   const [, startItemsListTransition] = React.useTransition();
   settings = React.useMemo(() => mergeSettings(defaultSettings, settings), [settings]);
