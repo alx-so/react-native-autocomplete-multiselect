@@ -7,7 +7,7 @@ export interface Settings {
   /**
    * @default 'input'
    */
-  type?: 'input' | 'select';
+  type?: 'input' | 'input-select' | 'select';
 
   /**
    * @default true
