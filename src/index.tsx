@@ -46,8 +46,6 @@ export const AutoComplete = (settings: Settings) => {
     seatchItems.length = 0;
     seatchItems.push(...newSearchItems);
 
-    console.log('seatchItems', seatchItems.length);
-
     setTags([...tags, tag]);
     setItems([..._items]);
   };
@@ -63,6 +61,10 @@ export const AutoComplete = (settings: Settings) => {
     setItems(newItems);
   };
 
+  const handleTagAdd = (tag: Item) => {
+    setTags([...tags, tag]);
+  };
+
   return (
     <View style={styles.container} ref={containerRef} onLayout={handleContainerLayoutChange}>
       {settings.type === 'input' ? (
@@ -71,6 +73,7 @@ export const AutoComplete = (settings: Settings) => {
           tags={tags}
           onTextChange={handleInputChange}
           onTagRemove={handleTagRemove}
+          onTagAdd={handleTagAdd}
         />
       ) : (
         <Select {...settings} tags={tags} onTagRemove={handleTagRemove} />

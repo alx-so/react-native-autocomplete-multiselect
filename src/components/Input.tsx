@@ -83,8 +83,11 @@ export const Input: InputComponent = (props) => {
   const removeLastTag = () => {
     if (tagsList.length === 0) return;
 
-    const newItems = tagsList.slice(0, -1);
-    setInputTags(newItems);
+    const lastTag = getLastTag();
+
+    if (lastTag) {
+      removeTag(lastTag, getLastTagIndex());
+    }
   };
 
   const removeLastTagAndSetInputValue = () => {
