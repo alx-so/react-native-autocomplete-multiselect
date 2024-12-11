@@ -47,7 +47,7 @@ export const AutoComplete = (settings: Settings) => {
         const _items = handleSearch(text);
         const inputIsNotEmpty = Boolean(text);
         const hasSuggestions = _items.length > 0;
-        setIsSuggestionsVisible(inputIsNotEmpty && hasSuggestions);
+
         setItems(_items);
 
         if (inputIsNotEmpty && !hasSuggestions) {
@@ -144,6 +144,7 @@ export const AutoComplete = (settings: Settings) => {
 
   const handleToggleDropdown = (isVisible: boolean) => {
     setIsSuggestionsVisible(isVisible);
+    setDropdownNotice(null);
   };
 
   const isInputComponent = settings.type === 'input' || settings.type === 'input-select';
