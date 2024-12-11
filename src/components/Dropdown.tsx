@@ -12,6 +12,7 @@ import {
 import { Position, type DropdownItem } from '../types/common';
 import { composePartialTextNode } from '../common/composePartialTextNode';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../constants';
+import { DropdownNotice, type DropdownNoticeOpts, type DropdownNoticeType } from './DropdownNotice';
 
 // TODO: make ajustable
 const requiredDropdownHeight = 200;
@@ -22,7 +23,11 @@ export const Dropdown: DropdownComponent = (props) => {
   const containerStyle = getContainerStylePosition(position, props.containerRect.height);
 
   const handleItemPress = (item: DropdownItem) => {
-    props.onItemPress?.(item);
+    props.onSuggestionItemPress?.(item);
+  };
+
+  const handleNoticePress = (type: DropdownNoticeType) => {
+    props.onNoticePress?.(type);
   };
 
   return (
@@ -34,30 +39,43 @@ export const Dropdown: DropdownComponent = (props) => {
           placeholder="Type to search.."
         />
       )}
-      <ScrollView style={styles.scrollView}>
-        {props.items.map((item) => (
-          <Pressable key={item.id} onPress={() => handleItemPress(item)}>
-            {composePartialTextNode(item.label, {
-              matchedTextNodeStyle: { fontWeight: 'bold' },
-              startStrPart: MATCH_TAG_START,
-              endStrPart: MATCH_TAG_END,
-            })}
-          </Pressable>
-        ))}
-      </ScrollView>
+
+      <DropdownNotice
+        label={props.notice?.label}
+        type={props.notice?.type}
+        onNoticePress={handleNoticePress}
+      />
+
+      {!props.notice && props.isSuggestionsListVisible && (
+        <ScrollView style={styles.scrollView}>
+          {props.items.map((item) => (
+            <Pressable key={item.id} onPress={() => handleItemPress(item)}>
+              {composePartialTextNode(item.label, {
+                matchedTextNodeStyle: { fontWeight: 'bold' },
+                startStrPart: MATCH_TAG_START,
+                endStrPart: MATCH_TAG_END,
+              })}
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
 
 interface DropdownProps {
   isSearchVisible?: boolean;
-  onSearchTextChange?: (text: string) => void;
+  isSuggestionsListVisible?: boolean;
   items: DropdownItem[];
   containerRect: LayoutRectangle;
-  onItemPress?: (item: DropdownItem) => void;
+  notice?: DropdownNoticeOpts | null;
+  onNoticePress?: (type: DropdownNoticeType) => void;
+  onSuggestionItemPress?: (item: DropdownItem) => void;
+  onSearchTextChange?: (text: string) => void;
 }
 
 type DropdownComponent = React.FC<DropdownProps>;
+type DropdownPosition = Position.Top | Position.Bottom;
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -75,8 +93,6 @@ const styles = StyleSheet.create({
     borderColor: 'green',
   },
 });
-
-type DropdownPosition = Position.Top | Position.Bottom;
 
 const getContainerStylePosition = (
   pos: DropdownPosition,
