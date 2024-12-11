@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Tag, type TagRemoveIconProps } from './Tag';
 import { TagListMemoized } from './TagList';
 import type { Settings } from '../types/settings';
@@ -15,6 +15,10 @@ export const Select: InputComponent = (props) => {
 
   const handleTagRemoveIconPress = (tag: TagItem) => {
     removeTag(tag);
+  };
+
+  const handlePress = () => {
+    props.onToggleDropdown?.(!props.isDropdownOpen);
   };
 
   const renderTag = useCallback(
@@ -37,10 +41,14 @@ export const Select: InputComponent = (props) => {
   );
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={handlePress}>
       <TagListMemoized tags={tagsList} render={renderTag} />
-      <ChevronIcon size={iconSize} style={styles.chevron} />
-    </View>
+      <ChevronIcon
+        rotation={props.isDropdownOpen ? 'Top' : 'Bottom'}
+        size={iconSize}
+        style={styles.chevron}
+      />
+    </Pressable>
   );
 };
 
@@ -65,7 +73,9 @@ const styles = StyleSheet.create({
 });
 
 interface InputProps extends Settings {
+  isDropdownOpen?: boolean;
   onTagRemove?: (tag: TagItem) => void;
+  onToggleDropdown?: (isOpen: boolean) => void;
 }
 
 type InputComponent = React.FC<InputProps>;

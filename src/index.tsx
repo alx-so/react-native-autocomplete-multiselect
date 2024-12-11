@@ -142,8 +142,13 @@ export const AutoComplete = (settings: Settings) => {
     }
   };
 
+  const handleToggleDropdown = (isVisible: boolean) => {
+    setIsSuggestionsVisible(isVisible);
+  };
+
   const isInputComponent = settings.type === 'input' || settings.type === 'input-select';
-  const isDropdownSearchVisible = settings.type === 'select' && settings.isSelectSearchVisible;
+  const isDropdownSearchVisible =
+    settings.type === 'select' && settings.isSelectSearchVisible && isSuggestionsVisible;
 
   return (
     <View style={styles.container} ref={containerRef} onLayout={handleContainerLayoutChange}>
@@ -157,7 +162,13 @@ export const AutoComplete = (settings: Settings) => {
           onTagAdd={handleTagAdd}
         />
       ) : (
-        <Select {...settings} tags={tags} onTagRemove={handleRemoveTag} />
+        <Select
+          {...settings}
+          tags={tags}
+          isDropdownOpen={isSuggestionsVisible}
+          onToggleDropdown={handleToggleDropdown}
+          onTagRemove={handleRemoveTag}
+        />
       )}
 
       <Dropdown

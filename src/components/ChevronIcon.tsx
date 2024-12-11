@@ -9,7 +9,6 @@ const ChevronIcon: ChevronIconComponent = (props) => {
   const chevronStyle = {
     width: size,
     height: size,
-    marginBottom: size / 2,
     transform: [
       {
         rotate: getRotationDegree(props.rotation || 'Bottom'),
@@ -45,6 +44,8 @@ const defaultProps: ChevronIconProps = {
   size: defaultSize,
 };
 
+const iconTransformOrigin = defaultSize / 2;
+
 const styles = StyleSheet.create({
   chevron: {
     marginRight: 5,
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
+    transformOrigin: [iconTransformOrigin, iconTransformOrigin, 0],
     borderRightWidth: 2,
     borderBottomWidth: 2,
     borderColor: '#444',
