@@ -5,7 +5,7 @@ import {
   type LayoutChangeEvent,
   Alert,
 } from 'react-native';
-import { InputMemoized } from './components/Input';
+import { InputMemoized, type InputRef } from './components/Input';
 import { defaultSettings } from './defaultSettings';
 import type { Settings } from './types/settings';
 import { Dropdown } from './components/Dropdown';
@@ -16,6 +16,7 @@ import { MATCH_TAG_END, MATCH_TAG_START } from './constants';
 import { Select } from './components/Select';
 import type { DropdownItem, TagItem } from './types/common';
 import { removeTags } from './common/composePartialTextNode';
+import type { DropdownNoticeOpts } from './components/DropdownNotice';
 const seatchItems = getTestSearchItems().sort((a, b) => a.label.localeCompare(b.label));
 
 export const AutoComplete = (settings: Settings) => {
@@ -24,6 +25,9 @@ export const AutoComplete = (settings: Settings) => {
   const [tags, setTags] = React.useState<TagItem[]>([]);
   const [items, setItems] = React.useState(seatchItems);
   const [, startItemsListTransition] = React.useTransition();
+  const [dropdownNotice, setDropdownNotice] = React.useState<DropdownNoticeOpts | null>(null);
+  const inputRef = React.useRef<InputRef>(null);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = React.useState(false);
   settings = React.useMemo(() => mergeSettings(defaultSettings, settings), [settings]);
 
   const { handleSearch } = useSearch(seatchItems as SearchItem[], {
@@ -38,22 +42,44 @@ export const AutoComplete = (settings: Settings) => {
   };
 
   const handleInputChange = (text: string) => {
-    startItemsListTransition(() => {
-      const _items = handleSearch(text);
-      setItems(_items);
-    });
+    if (settings.type === 'input-select' || settings.type === 'select') {
+      startItemsListTransition(() => {
+        const _items = handleSearch(text);
+        const inputIsNotEmpty = Boolean(text);
+        const hasSuggestions = _items.length > 0;
+        setIsSuggestionsVisible(inputIsNotEmpty && hasSuggestions);
+        setItems(_items);
+
+        if (inputIsNotEmpty && !hasSuggestions) {
+          setDropdownNotice({
+            label: 'No results found',
+            type: 'info',
+          });
+        } else {
+          setDropdownNotice(null);
+        }
+      });
+    }
+
+    if (settings.type === 'input') {
+      setDropdownNotice({
+        label: text,
+        type: 'add-tag',
+      });
+    }
   };
 
   const handleItemPress = (item: DropdownItem) => {
     const tag = { ...item, label: removeTags(item.label) };
 
-    const _items = items.filter((i) => i.id !== item.id);
     const newSearchItems = seatchItems.filter((i) => i.id !== item.id);
     seatchItems.length = 0;
     seatchItems.push(...newSearchItems);
 
     setTags([...tags, tag]);
-    setItems([..._items]);
+    setItems([...seatchItems]);
+    setIsSuggestionsVisible(false);
+    inputRef.current?.clear();
   };
 
   const removeTag = (tag: TagItem) => {
@@ -75,6 +101,7 @@ export const AutoComplete = (settings: Settings) => {
 
   const handleTagAdd = (tag: TagItem) => {
     setTags([...tags, tag]);
+    setDropdownNotice(null);
   };
 
   const handleRemoveTag = (tag: TagItem) => {
@@ -105,6 +132,16 @@ export const AutoComplete = (settings: Settings) => {
     ]);
   };
 
+  const handleNoticePress = (type: string) => {
+    if (type === 'add-tag') {
+      const label = inputRef.current?.getValue() || '';
+      const tag: TagItem = { id: new Date().getTime(), label };
+      setTags([...tags, tag]);
+      setDropdownNotice(null);
+      inputRef.current?.clear();
+    }
+  };
+
   const isInputComponent = settings.type === 'input' || settings.type === 'input-select';
   const isDropdownSearchVisible = settings.type === 'select' && settings.isSelectSearchVisible;
 
@@ -112,6 +149,7 @@ export const AutoComplete = (settings: Settings) => {
     <View style={styles.container} ref={containerRef} onLayout={handleContainerLayoutChange}>
       {isInputComponent ? (
         <InputMemoized
+          refObj={inputRef}
           {...settings}
           tags={tags}
           onTextChange={handleInputChange}
@@ -123,11 +161,14 @@ export const AutoComplete = (settings: Settings) => {
       )}
 
       <Dropdown
+        notice={dropdownNotice}
         items={items}
         containerRect={containerRect}
+        isSuggestionsListVisible={isSuggestionsVisible}
         isSearchVisible={isDropdownSearchVisible}
+        onNoticePress={handleNoticePress}
         onSearchTextChange={handleInputChange}
-        onItemPress={handleItemPress}
+        onSuggestionItemPress={handleItemPress}
       />
     </View>
   );
