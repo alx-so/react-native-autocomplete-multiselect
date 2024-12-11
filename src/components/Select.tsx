@@ -44,6 +44,7 @@ export const Select: InputComponent = (props) => {
     <Pressable style={styles.container} onPress={handlePress}>
       <TagListMemoized tags={tagsList} render={renderTag} />
       <ChevronIcon
+        onPress={handlePress}
         rotation={props.isDropdownOpen ? 'Top' : 'Bottom'}
         size={iconSize}
         style={styles.chevron}
