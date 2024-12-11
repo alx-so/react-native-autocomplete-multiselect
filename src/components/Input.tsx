@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useImperativeHandle } from 'react';
 import {
   TextInput,
   StyleSheet,
@@ -16,6 +16,15 @@ export const Input: InputComponent = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const [inputValue, setInputValue] = React.useState<string>('');
   const newTagBaseId = React.useId();
+
+  useImperativeHandle(props.refObj, () => ({
+    clear() {
+      setInputValue('');
+    },
+    getValue() {
+      return inputValue;
+    },
+  }));
 
   const handleTextChange = (text: string) => {
     setInputValue(text);
@@ -115,6 +124,7 @@ export const Input: InputComponent = (props) => {
       <TagListMemoized tags={tagsList} render={renderTag} />
 
       <TextInput
+        returnKeyType="done"
         editable={!props.disabled}
         value={inputValue}
         submitBehavior={props.blurOnSubmit ? 'blurAndSubmit' : 'submit'}
@@ -152,7 +162,13 @@ const styles = StyleSheet.create({
   },
 });
 
+export interface InputRef {
+  clear: () => void;
+  getValue: () => string;
+}
+
 interface InputProps extends Settings {
+  refObj?: React.Ref<InputRef>;
   onTextChange?: (text: string) => void;
   onTagRemove?: (tag: TagItem) => void;
   onTagAdd?: (tag: TagItem) => void;
