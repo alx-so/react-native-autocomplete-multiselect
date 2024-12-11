@@ -6,6 +6,8 @@ import type { Settings } from '../types/settings';
 import type { TagItem } from '../types/common';
 import ChevronIcon from './ChevronIcon';
 
+const iconSize = 12;
+
 export const Select: InputComponent = (props) => {
   const tagsList = props.tags ?? [];
 
@@ -37,7 +39,7 @@ export const Select: InputComponent = (props) => {
   return (
     <View style={styles.container}>
       <TagListMemoized tags={tagsList} render={renderTag} />
-      <ChevronIcon size={12} style={styles.chevron} />
+      <ChevronIcon size={iconSize} style={styles.chevron} />
     </View>
   );
 };
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingVertical: 4,
     paddingLeft: 4,
-    paddingRight: 16,
+    paddingRight: iconSize * 1.75,
   },
   chevron: { position: 'absolute', right: 4, top: 18 },
 });
