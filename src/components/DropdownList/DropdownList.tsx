@@ -10,6 +10,8 @@ import React from 'react';
 import { useContainerStyle } from './utils';
 
 interface DropdownListProps {
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
   items?: DropdownItem[];
   containerRect: LayoutRectangle;
   renderItem: (item: DropdownItem) => React.ReactNode;
@@ -25,9 +27,11 @@ export const DropdownList: React.FC<DropdownListProps> = (props) => {
 
   return (
     <View style={[styles.dropdown, containerStyle]}>
+      {props.header}
       <ScrollView style={styles.scrollView} {...props.scrollViewProps}>
         {items.map((item) => props.renderItem(item))}
       </ScrollView>
+      {props.footer}
     </View>
   );
 };
