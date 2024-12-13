@@ -1,59 +1,33 @@
-import React, { useCallback } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Tag, type TagRemoveIconProps } from './Tag';
-import { TagListMemoized } from './TagList';
-import type { Settings } from '../types/settings';
-import type { TagItem } from '../types/common';
+import React from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import ChevronIcon from './ChevronIcon';
 
 const iconSize = 12;
 
-export const Select: InputComponent = (props) => {
-  const tagsList = props.tags ?? [];
-
-  const removeTag = (tag: TagItem) => props.onTagRemove?.(tag);
-
-  const handleTagRemoveIconPress = (tag: TagItem) => {
-    removeTag(tag);
-  };
+export const Select: SelectComponent = (props) => {
+  const [value, setValue] = React.useState<string | string[]>(props.value || '');
 
   const handlePress = () => {
-    props.onToggleDropdown?.(!props.isDropdownOpen);
+    if (props.disabled) return;
+
+    if (props.open) {
+      props.onClose?.();
+    } else {
+      props.onOpen?.();
+    }
   };
-
-  const renderTag = useCallback(
-    (tag: TagItem) => {
-      const other: TagRemoveIconProps = props.showRemoveButton
-        ? {
-            isVisible: true,
-            onPress: () => handleTagRemoveIconPress(tag),
-          }
-        : {};
-
-      return (
-        <Tag key={tag.id} removeIconProps={other} disabled={tag.disabled}>
-          {tag.label}
-        </Tag>
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.showRemoveButton, tagsList]
-  );
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
-      <TagListMemoized tags={tagsList} render={renderTag} />
       <ChevronIcon
         onPress={handlePress}
-        rotation={props.isDropdownOpen ? 'Top' : 'Bottom'}
+        rotation={props.open ? 'Top' : 'Bottom'}
         size={iconSize}
         style={styles.chevron}
       />
     </Pressable>
   );
 };
-
-export const SelectMemoized = React.memo(Select);
 
 const styles = StyleSheet.create({
   container: {
@@ -73,10 +47,18 @@ const styles = StyleSheet.create({
   chevron: { position: 'absolute', right: 4, top: 18 },
 });
 
-interface InputProps extends Settings {
-  isDropdownOpen?: boolean;
-  onTagRemove?: (tag: TagItem) => void;
-  onToggleDropdown?: (isOpen: boolean) => void;
+interface SelectProps {
+  disabled?: boolean;
+  multiple?: boolean;
+  open?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onChange?: (value: string | string[]) => void;
+  placeholder?: string;
+  renderValue?: (value: string) => React.ReactNode;
+  testID?: string;
+  value?: string | string[];
+  icon?: React.ReactNode;
 }
 
-type InputComponent = React.FC<InputProps>;
+type SelectComponent = React.FC<SelectProps>;

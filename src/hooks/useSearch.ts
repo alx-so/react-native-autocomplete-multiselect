@@ -3,6 +3,7 @@ import { Sifter } from '../libs/sifter';
 
 export const useSearch = (items: SearchItem[], opts: SearchOpts) => {
   const sifter = React.useRef<Sifter | null>(new Sifter(items));
+  const isSearchIndexReady = React.useRef(false);
 
   const handleSearch = (text: string) => {
     const res = sifter.current?.search(text, {
@@ -53,11 +54,23 @@ export const useSearch = (items: SearchItem[], opts: SearchOpts) => {
     return _items;
   };
 
-  return { handleSearch };
+  const warmUpSearch = () => {
+    if (isSearchIndexReady.current) return;
+
+    const startTime = performance.now();
+    handleSearch('a');
+    const endTime = performance.now();
+
+    isSearchIndexReady.current = true;
+
+    console.log('Warm Up Search Index time MS:', endTime - startTime);
+  };
+
+  return { handleSearch, warmUpSearch };
 };
 
 export interface SearchItem {
-  id: string;
+  id: string | number;
   label: string;
 }
 

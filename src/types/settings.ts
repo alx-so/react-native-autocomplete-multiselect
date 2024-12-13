@@ -1,4 +1,4 @@
-import type { TagItem } from './common';
+import type { DropdownItem, TagItem } from './common';
 
 /**
  * TODO: separate settings for input and select
@@ -7,7 +7,7 @@ export interface Settings {
   /**
    * @default 'input'
    */
-  type?: 'input' | 'input-select' | 'select';
+  type?: 'input' | 'input-select' | 'select' | 'select-multiple';
 
   /**
    * @default true
@@ -34,6 +34,11 @@ export interface Settings {
    * - if tags does not fit in 1 line, wrap tags to the next lines
    */
   wrapTags?: boolean;
+
+  /**
+   * TODO: require for all, except 'input'
+   */
+  items?: DropdownItem[];
 
   /**
    * TODO:
@@ -69,6 +74,11 @@ export interface Settings {
    * Use system alert to confirm tag deletion.
    */
   confirmTagDelete?: boolean;
+
+  /**
+   * TODO: close dropdown on item select.
+   */
+  closeOnSuggestionSelect?: boolean;
 
   /**
    * TODO: provide a way to customize the remove button.

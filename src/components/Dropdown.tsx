@@ -8,19 +8,42 @@ import {
   type LayoutRectangle,
   TextInput,
   Pressable,
+  Keyboard,
 } from 'react-native';
 import { Position, type DropdownItem } from '../types/common';
 import { composePartialTextNode } from '../common/composePartialTextNode';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../constants';
 import { DropdownNotice, type DropdownNoticeOpts, type DropdownNoticeType } from './DropdownNotice';
+import { useEffect } from 'react';
+import React from 'react';
 
 // TODO: make ajustable
 const requiredDropdownHeight = 200;
 
 export const Dropdown: DropdownComponent = (props) => {
+  const [keyboardHeight, setKeyboardHeight] = React.useState(0);
   const deviceDimensions = useWindowDimensions();
-  const position = calcDropdownPosition(props.containerRect, deviceDimensions.height);
+  const position = calcDropdownPosition(
+    props.containerRect,
+    deviceDimensions.height,
+    keyboardHeight
+  );
   const containerStyle = getContainerStylePosition(position, props.containerRect.height);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
+      setKeyboardHeight(event.endCoordinates.height);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleItemPress = (item: DropdownItem) => {
     props.onSuggestionItemPress?.(item);
@@ -29,6 +52,8 @@ export const Dropdown: DropdownComponent = (props) => {
   const handleNoticePress = (type: DropdownNoticeType) => {
     props.onNoticePress?.(type);
   };
+
+  if (!props.isSuggestionsListVisible && !props.notice) return null;
 
   return (
     <View style={[styles.dropdown, containerStyle]}>
@@ -46,10 +71,14 @@ export const Dropdown: DropdownComponent = (props) => {
         onNoticePress={handleNoticePress}
       />
 
-      {!props.notice && props.isSuggestionsListVisible && (
-        <ScrollView style={styles.scrollView}>
+      {Array.isArray(props.items) && !props.notice && props.isSuggestionsListVisible && (
+        <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="always">
           {props.items.map((item) => (
-            <Pressable key={item.id} onPress={() => handleItemPress(item)}>
+            <Pressable
+              key={item.id}
+              onPress={() => handleItemPress(item)}
+              style={styles.suggestionItem}
+            >
               {composePartialTextNode(item.label, {
                 matchedTextNodeStyle: { fontWeight: 'bold' },
                 startStrPart: MATCH_TAG_START,
@@ -66,7 +95,7 @@ export const Dropdown: DropdownComponent = (props) => {
 interface DropdownProps {
   isSearchVisible?: boolean;
   isSuggestionsListVisible?: boolean;
-  items: DropdownItem[];
+  items?: DropdownItem[];
   containerRect: LayoutRectangle;
   notice?: DropdownNoticeOpts | null;
   onNoticePress?: (type: DropdownNoticeType) => void;
@@ -81,10 +110,18 @@ const styles = StyleSheet.create({
   scrollView: {
     maxHeight: requiredDropdownHeight / 2,
   },
+  suggestionItem: {
+    paddingVertical: 5,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderBottomWidth: 0.5,
+    borderColor: 'grey',
+  },
   dropdown: {
     width: '100%',
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    zIndex: 9999999999999,
+    backgroundColor: 'white',
+    borderWidth: 1,
   },
   searchInput: {
     height: 54,
@@ -104,8 +141,18 @@ const getContainerStylePosition = (
   };
 };
 
-const calcDropdownPosition = (rect: LayoutRectangle, windowHeight: number) => {
-  const position = rect.y + requiredDropdownHeight < windowHeight ? Position.Bottom : Position.Top;
+const calcDropdownPosition = (
+  rect: LayoutRectangle,
+  windowHeight: number,
+  keyboardHeight: number
+) => {
+  const yBottomPosition = rect.y + rect.height;
+  const yBottomPositionWithDropdown = yBottomPosition + requiredDropdownHeight;
+  const windowHeightWithoutKeyboard = windowHeight - keyboardHeight;
 
-  return position;
+  if (yBottomPositionWithDropdown > windowHeightWithoutKeyboard) {
+    return Position.Top;
+  }
+
+  return Position.Bottom;
 };

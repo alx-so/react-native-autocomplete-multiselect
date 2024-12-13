@@ -133,6 +133,8 @@ export const Input: InputComponent = (props) => {
         onChangeText={handleTextChange}
         onKeyPress={handleKeyPress}
         onSubmitEditing={handleSubmitEditing}
+        onBlur={props.onBlur}
+        onFocus={props.onFocus}
       />
     </View>
   );
@@ -142,6 +144,7 @@ export const InputMemoized = React.memo(Input);
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     minHeight: 54,
     display: 'flex',
     flexDirection: 'row',
@@ -167,11 +170,15 @@ export interface InputRef {
   getValue: () => string;
 }
 
+const o = {c: 1, a: 2};
+
 interface InputProps extends Settings {
   refObj?: React.Ref<InputRef>;
   onTextChange?: (text: string) => void;
   onTagRemove?: (tag: TagItem) => void;
   onTagAdd?: (tag: TagItem) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
 }
 
 type InputComponent = React.FC<InputProps>;
