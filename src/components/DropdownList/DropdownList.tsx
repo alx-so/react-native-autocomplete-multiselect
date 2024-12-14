@@ -4,12 +4,14 @@ import {
   View,
   type LayoutRectangle,
   type ScrollViewProps,
+  type ViewStyle,
 } from 'react-native';
 import { type DropdownItem } from '../../types/common';
 import React from 'react';
 import { useContainerStyle } from './utils';
 
 interface DropdownListProps {
+  style?: ViewStyle;
   header?: React.ReactNode;
   footer?: React.ReactNode;
   items?: DropdownItem[];
@@ -26,7 +28,7 @@ export const DropdownList: React.FC<DropdownListProps> = (props) => {
   const containerStyle = useContainerStyle(props.containerRect, maxDropdownHeight);
 
   return (
-    <View style={[styles.dropdown, containerStyle]}>
+    <View style={[styles.dropdown, containerStyle, props.style]}>
       {props.header}
       <ScrollView style={styles.scrollView} {...props.scrollViewProps}>
         {items.map((item) => props.renderItem(item))}
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     maxHeight: maxDropdownHeight / 2,
   },
   dropdown: {
-    width: '100%',
+    minWidth: '100%',
     position: 'absolute',
     zIndex: 9999999999999,
     backgroundColor: 'white',

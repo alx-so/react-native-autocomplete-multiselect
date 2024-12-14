@@ -170,8 +170,6 @@ export interface InputRef {
   getValue: () => string;
 }
 
-const o = {c: 1, a: 2};
-
 interface InputProps extends Settings {
   refObj?: React.Ref<InputRef>;
   onTextChange?: (text: string) => void;
