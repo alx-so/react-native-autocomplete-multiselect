@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import ChevronIcon from '../ChevronIcon';
 import { DropdownList } from '../DropdownList';
-import { defaultLayloutRect, getTestSearchItems } from '../../utils';
+import { defaultLayloutRect } from '../../utils';
 import type { DropdownItem } from '../../types/common';
 import {
   composeSelectedDropdownItemStyle,
@@ -34,6 +34,7 @@ interface SelectProps {
   testID?: string;
   value?: SelectValue;
   icon?: React.ReactNode;
+  items: DropdownItem[];
 }
 
 const iconSize = 12;
@@ -161,7 +162,7 @@ export const Select: React.FC<SelectProps> = (props) => {
       {isOpen && (
         <DropdownList
           containerRect={containerRect}
-          items={getTestSearchItems()}
+          items={props.items}
           renderItem={renderDropdownItem}
         />
       )}
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   selectValueText: {
+    width: '100%',
     verticalAlign: 'middle',
   },
   chevron: {
