@@ -16,9 +16,10 @@ type InputValue = string | string[];
 interface InputProps {
   multiple?: boolean;
   value?: InputValue;
-  onInputChange?: (value: InputValue) => void;
-  onRenderTag?: (tag: TagItem) => React.ReactNode;
+  onChange?: (value: InputValue) => void;
   tagProps?: {
+    onChange?: (tags: TagItem[]) => void;
+    onRender?: (tag: TagItem) => React.ReactNode;
     showRemoveButton?: boolean;
     removeMode?: 'delete' | 'delete-modify' | 'delete-confirm';
   };
@@ -30,9 +31,14 @@ export const Input: React.FC<InputProps> = (props) => {
   const tagRemoveMode = props.tagProps?.removeMode || 'delete';
 
   useEffect(() => {
-    props.onInputChange?.(value);
+    props.onChange?.(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  useEffect(() => {
+    props.tagProps?.onChange?.(tags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags]);
 
   const handleTextChange = (text: string) => {
     setValue(text);
@@ -64,8 +70,8 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   const renderTag = (tag: TagItem) => {
-    if (props.onRenderTag) {
-      return props.onRenderTag(tag);
+    if (props.tagProps?.onRender) {
+      return props.tagProps?.onRender(tag);
     }
 
     return (
