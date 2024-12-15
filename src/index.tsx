@@ -5,7 +5,7 @@ import {
   type LayoutChangeEvent,
   Alert,
 } from 'react-native';
-import { InputMemoized, type InputRef } from './components/Input';
+import { InputMemoized, type InputProps, type InputRef, type InputValue } from './components/Input';
 import { defaultSettings } from './defaultSettings';
 import type { Settings } from './types/settings';
 import { Dropdown } from './components/Dropdown';
@@ -240,7 +240,7 @@ export const AutoComplete = (settings: Settings) => {
   );
 };
 
-const InputEnchanced = (props) => {
+const InputEnchanced = (props: InputProps) => {
   const [inputValue, setInputValue] = React.useState<string>('');
   const [endNode, setEndNode] = React.useState<React.ReactNode | null>(null);
 
@@ -259,7 +259,11 @@ const InputEnchanced = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, props.multiple]);
 
-  return <Input {...props} onChange={setInputValue} endNode={endNode} />;
+  const handleInputValueChange = (value: InputValue) => {
+    setInputValue(value as string);
+  };
+
+  return <Input {...props} onChange={handleInputValueChange} endNode={endNode} />;
 };
 
 AutoComplete.Select = Select;

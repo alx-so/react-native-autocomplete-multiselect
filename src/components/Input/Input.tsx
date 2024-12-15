@@ -11,9 +11,9 @@ import type { TagItem } from '../../types/common';
 import { TagListMemoized } from '../TagList';
 import { Tag } from '../Tag';
 
-type InputValue = string | string[];
+export type InputValue = string | string[];
 
-interface InputProps {
+export interface InputProps {
   multiple?: boolean;
   value?: InputValue;
   onChange?: (value: InputValue) => void;
