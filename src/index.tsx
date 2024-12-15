@@ -18,6 +18,8 @@ import type { DropdownItem, TagItem } from './types/common';
 import { removeTags } from './common/composePartialTextNode';
 import type { DropdownNoticeOpts } from './components/DropdownNotice';
 import { Select } from './components/Select';
+// import { Input } from './components/Input';
+import { Input } from './components/Input';
 
 export const AutoComplete = (settings: Settings) => {
   const seatchItems = useMemo<SearchItem[]>(() => {
@@ -238,6 +240,7 @@ export const AutoComplete = (settings: Settings) => {
 };
 
 AutoComplete.Select = Select;
+AutoComplete.Input = Input;
 
 const styles = StyleSheet.create({
   container: {
