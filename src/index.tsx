@@ -20,6 +20,7 @@ import type { DropdownNoticeOpts } from './components/DropdownNotice';
 import { Select } from './components/Select';
 // import { Input } from './components/Input';
 import { Input } from './components/Input';
+import { AddTagDropdownNotice } from './components/AddTagDropdownNotice';
 
 export const AutoComplete = (settings: Settings) => {
   const seatchItems = useMemo<SearchItem[]>(() => {
@@ -239,8 +240,30 @@ export const AutoComplete = (settings: Settings) => {
   );
 };
 
+const InputEnchanced = (props) => {
+  const [inputValue, setInputValue] = React.useState<string>('');
+  const [endNode, setEndNode] = React.useState<React.ReactNode | null>(null);
+
+  useEffect(() => {
+    if (props.multiple) {
+      if (inputValue) {
+        setEndNode(<AddTagDropdownNotice notice={inputValue} />);
+
+        return;
+      }
+
+      if (endNode) {
+        setEndNode(null);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue, props.multiple]);
+
+  return <Input {...props} onChange={setInputValue} endNode={endNode} />;
+};
+
 AutoComplete.Select = Select;
-AutoComplete.Input = Input;
+AutoComplete.Input = InputEnchanced;
 
 const styles = StyleSheet.create({
   container: {

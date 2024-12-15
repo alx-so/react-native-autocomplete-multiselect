@@ -17,6 +17,8 @@ interface InputProps {
   multiple?: boolean;
   value?: InputValue;
   onChange?: (value: InputValue) => void;
+  startNode?: React.ReactNode;
+  endNode?: React.ReactNode;
   tagProps?: {
     onChange?: (tags: TagItem[]) => void;
     onRender?: (tag: TagItem) => React.ReactNode;
@@ -45,6 +47,8 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   const handleSubmitEditing = () => {
+    if (!value) return;
+
     if (props.multiple) {
       const tag = composeTagItem(value as string);
       setTags([...tags, tag]);
@@ -130,15 +134,21 @@ export const Input: React.FC<InputProps> = (props) => {
 
   return (
     <View style={styles.container}>
-      {props.multiple && <TagListMemoized tags={tags} render={renderTag} />}
+      {props.startNode && props.startNode}
 
-      <TextInput
-        value={value}
-        style={styles.input}
-        onChangeText={handleTextChange}
-        onSubmitEditing={handleSubmitEditing}
-        onKeyPress={handleKeyPress}
-      />
+      <View style={styles.innerContainer}>
+        {props.multiple && <TagListMemoized tags={tags} render={renderTag} />}
+
+        <TextInput
+          value={value}
+          style={styles.input}
+          onChangeText={handleTextChange}
+          onSubmitEditing={handleSubmitEditing}
+          onKeyPress={handleKeyPress}
+        />
+      </View>
+
+      {props.endNode && props.endNode}
     </View>
   );
 };
@@ -193,15 +203,17 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     minHeight: 54,
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
     width: '100%',
     height: 'auto',
     borderColor: 'black',
     borderWidth: 1,
+  },
+  innerContainer: {
     padding: 4,
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
   input: {
     height: 40,
