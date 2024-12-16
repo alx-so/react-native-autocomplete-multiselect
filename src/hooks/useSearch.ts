@@ -5,6 +5,11 @@ export const useSearch = (items: SearchItem[], opts: SearchOpts) => {
   const sifter = React.useRef<Sifter | null>(new Sifter(items));
   const isSearchIndexReady = React.useRef(false);
 
+  React.useEffect(() => {
+    warmUpSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSearch = (text: string) => {
     const res = sifter.current?.search(text, {
       limit: opts.limit || 5,
@@ -66,7 +71,7 @@ export const useSearch = (items: SearchItem[], opts: SearchOpts) => {
     console.log('Warm Up Search Index time MS:', endTime - startTime);
   };
 
-  return { handleSearch, warmUpSearch };
+  return { handleSearch };
 };
 
 export interface SearchItem {

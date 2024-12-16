@@ -7,7 +7,20 @@ import {
 } from 'react-native';
 import { AddTagDropdownNotice } from './AddTagDropdownNotice';
 
-export const DropdownNotice: DropdownNoticeComponent = (props) => {
+interface DropdownNoticeProps extends PressableProps {
+  label: string;
+  type: DropdownNoticeType;
+  onNoticePress?: (type: DropdownNoticeType) => void;
+}
+
+export interface DropdownNoticeOpts {
+  label: string;
+  type: DropdownNoticeType;
+}
+
+export type DropdownNoticeType = 'info' | 'error' | 'add-tag';
+
+export const DropdownNotice: React.FC<DropdownNoticeProps> = (props) => {
   if (!props.label || !props.type) {
     return null;
   }
@@ -34,23 +47,16 @@ export const DropdownNotice: DropdownNoticeComponent = (props) => {
   );
 };
 
-interface DropdownNoticeProps extends PressableProps {
-  label?: string;
-  type?: DropdownNoticeType;
-  onNoticePress?: (type: DropdownNoticeType) => void;
-}
-
-export interface DropdownNoticeOpts {
-  label: string;
-  type: DropdownNoticeType;
-}
-
-type DropdownNoticeComponent = React.FC<DropdownNoticeProps>;
-
-export type DropdownNoticeType = 'info' | 'error' | 'add-tag';
-
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    width: '100%',
+    backgroundColor: 'white',
     flexDirection: 'row',
+    alignSelf: 'flex-end',
+    borderWidth: 1,
+    zIndex: 9999999999,
   },
 });

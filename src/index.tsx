@@ -5,11 +5,11 @@ import {
   type LayoutChangeEvent,
   Alert,
 } from 'react-native';
-import { InputMemoized, type InputProps, type InputRef, type InputValue } from './components/Input';
+import { InputMemoized, type InputRef } from './components/Input2';
 import { defaultSettings } from './defaultSettings';
 import type { Settings } from './types/settings';
 import { Dropdown } from './components/Dropdown';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { defaultLayloutRect, mergeSettings } from './utils';
 import { useSearch, type SearchItem } from './hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from './constants';
@@ -18,9 +18,8 @@ import type { DropdownItem, TagItem } from './types/common';
 import { removeTags } from './common/composePartialTextNode';
 import type { DropdownNoticeOpts } from './components/DropdownNotice';
 import { Select } from './components/Select';
-// import { Input } from './components/Input';
-import { Input } from './components/Input';
-import { AddTagDropdownNotice } from './components/AddTagDropdownNotice';
+import { InputSelect } from './components/InputSelect';
+import { InputEnchanced } from './components/Input';
 
 export const AutoComplete = (settings: Settings) => {
   const seatchItems = useMemo<SearchItem[]>(() => {
@@ -37,16 +36,12 @@ export const AutoComplete = (settings: Settings) => {
   const [isSuggestionsVisible, setIsSuggestionsVisible] = React.useState(false);
   settings = React.useMemo(() => mergeSettings(defaultSettings, settings), [settings]);
 
-  const { handleSearch, warmUpSearch } = useSearch(seatchItems, {
+  const { handleSearch } = useSearch(seatchItems, {
     wrapMatch: {
       start: MATCH_TAG_START,
       end: MATCH_TAG_END,
     },
   });
-
-  useEffect(() => {
-    warmUpSearch();
-  }, [warmUpSearch]);
 
   const handleContainerLayoutChange = (e: LayoutChangeEvent) => {
     setContainerRect(e.nativeEvent.layout);
@@ -54,8 +49,6 @@ export const AutoComplete = (settings: Settings) => {
 
   const handleInputChange = (text: string) => {
     const isSimpleInput = settings.type === 'input';
-
-    console.log('handleInputChange', text, isSimpleInput);
 
     if (isSimpleInput) {
       setDropdownNotice({
@@ -240,34 +233,9 @@ export const AutoComplete = (settings: Settings) => {
   );
 };
 
-const InputEnchanced = (props: InputProps) => {
-  const [inputValue, setInputValue] = React.useState<string>('');
-  const [endNode, setEndNode] = React.useState<React.ReactNode | null>(null);
-
-  useEffect(() => {
-    if (props.multiple) {
-      if (inputValue) {
-        setEndNode(<AddTagDropdownNotice notice={inputValue} />);
-
-        return;
-      }
-
-      if (endNode) {
-        setEndNode(null);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, props.multiple]);
-
-  const handleInputValueChange = (value: InputValue) => {
-    setInputValue(value as string);
-  };
-
-  return <Input {...props} onChange={handleInputValueChange} endNode={endNode} />;
-};
-
 AutoComplete.Select = Select;
 AutoComplete.Input = InputEnchanced;
+AutoComplete.InputSelect = InputSelect;
 
 const styles = StyleSheet.create({
   container: {

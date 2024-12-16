@@ -17,6 +17,7 @@ import {
   isItemSelected,
   removeItemFromMultipleValue,
 } from './utils';
+import { Tag } from '../Tag';
 
 export type SelectValue = string | string[];
 
@@ -116,9 +117,11 @@ export const Select: React.FC<SelectProps> = (props) => {
     }
 
     return (
-      <Text style={styles.selectValueText} {...textEllipsisMode}>
-        {value.join(',')}
-      </Text>
+      <>
+        {value.map((val, i) => (
+          <Tag key={i}>{val}</Tag>
+        ))}
+      </>
     );
   };
 

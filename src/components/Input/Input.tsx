@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useImperativeHandle } from 'react';
 import {
   Alert,
   StyleSheet,
   TextInput,
   View,
+  type LayoutChangeEvent,
   type NativeSyntheticEvent,
   type TextInputKeyPressEventData,
+  type ViewStyle,
 } from 'react-native';
 import type { TagItem } from '../../types/common';
 import { TagListMemoized } from '../TagList';
@@ -13,10 +15,23 @@ import { Tag } from '../Tag';
 
 export type InputValue = string | string[];
 
+export interface InputRefObject {
+  focus: () => void;
+  blur: () => void;
+  setTags: (tags: TagItem[]) => void;
+}
+
 export interface InputProps {
+  refObject?: React.RefObject<InputRefObject>;
+  containerStyle?: ViewStyle;
   multiple?: boolean;
   value?: InputValue;
+  defaultValue?: InputValue;
+  onContainerLayoutChange?: (e: LayoutChangeEvent) => void;
   onChange?: (value: InputValue) => void;
+  onFocus?: () => void;
+  onSubmitEditing?: () => void;
+  onBlur?: () => void;
   startNode?: React.ReactNode;
   endNode?: React.ReactNode;
   tagProps?: {
@@ -28,26 +43,59 @@ export interface InputProps {
 }
 
 export const Input: React.FC<InputProps> = (props) => {
-  const [value, setValue] = React.useState(composeInitialValue(props.value, props.multiple));
-  const [tags, setTags] = React.useState<TagItem[]>(props.multiple ? composeTags(props.value) : []);
+  const isControlledComponent = typeof props.value !== 'undefined';
+  const inputDefaultValue = isControlledComponent ? props.value : props.defaultValue;
+  const tagsDefaultValue = props.multiple ? composeTags(inputDefaultValue) : [];
   const tagRemoveMode = props.tagProps?.removeMode || 'delete';
 
+  const inputRef = React.useRef<TextInput>(null);
+  const [value, setValue] = React.useState(composeValue(inputDefaultValue, props.multiple));
+  const [tags, setTags] = React.useState<TagItem[]>(tagsDefaultValue);
+
+  useImperativeHandle(props.refObject, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
+    blur: () => {
+      inputRef.current?.blur();
+    },
+    setTags: (tagsList) => setTags(tagsList),
+  }));
+
   useEffect(() => {
-    props.onChange?.(value);
+    if (!isControlledComponent) return;
+
+    setValue(props.value as string);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [props.value]);
 
   useEffect(() => {
     props.tagProps?.onChange?.(tags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tags]);
 
+  useEffect(() => {
+    if (isControlledComponent) return;
+
+    props.onChange?.(value);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   const handleTextChange = (text: string) => {
+    if (isControlledComponent) {
+      props.onChange?.(text);
+      return;
+    }
+
     setValue(text);
   };
 
   const handleSubmitEditing = () => {
-    if (!value) return;
+    if (props.onSubmitEditing) props.onSubmitEditing();
+
+    if (!value || props.onSubmitEditing) return;
 
     if (props.multiple) {
       const tag = composeTagItem(value as string);
@@ -71,6 +119,14 @@ export const Input: React.FC<InputProps> = (props) => {
   const handleKeyPress = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     const _isPressedKeyBackspace = isPressedKeyBackspace(ev);
     if (_isPressedKeyBackspace) handleBackspacePress();
+  };
+
+  const handleFocus = () => {
+    props.onFocus?.();
+  };
+
+  const handleBlur = () => {
+    props.onBlur?.();
   };
 
   const renderTag = (tag: TagItem) => {
@@ -133,18 +189,21 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.containerStyle]} onLayout={props.onContainerLayoutChange}>
       {props.startNode && props.startNode}
 
       <View style={styles.innerContainer}>
         {props.multiple && <TagListMemoized tags={tags} render={renderTag} />}
 
         <TextInput
+          ref={inputRef}
           value={value}
           style={styles.input}
           onChangeText={handleTextChange}
           onSubmitEditing={handleSubmitEditing}
           onKeyPress={handleKeyPress}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
       </View>
 
@@ -153,7 +212,7 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 };
 
-const composeInitialValue = (value: InputValue | undefined, multiple?: boolean): string => {
+const composeValue = (value: InputValue | undefined, multiple?: boolean): string => {
   if (multiple || !value) {
     return '';
   }
@@ -175,7 +234,7 @@ const composeTags = (value?: InputValue): TagItem[] => {
 
 const composeTagItem = (label: string): TagItem => {
   return {
-    id: label,
+    id: new Date().getTime(),
     label,
   };
 };

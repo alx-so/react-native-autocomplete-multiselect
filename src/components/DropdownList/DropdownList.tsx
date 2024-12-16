@@ -30,7 +30,11 @@ export const DropdownList: React.FC<DropdownListProps> = (props) => {
   return (
     <View style={[styles.dropdown, containerStyle, props.style]}>
       {props.header}
-      <ScrollView style={styles.scrollView} {...props.scrollViewProps}>
+      <ScrollView
+        style={styles.scrollView}
+        {...props.scrollViewProps}
+        keyboardShouldPersistTaps="always"
+      >
         {items.map((item) => props.renderItem(item))}
       </ScrollView>
       {props.footer}
