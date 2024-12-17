@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '100%',
     left: 0,
-    zIndex: 2,
+    zIndex: 99999,
   },
   selectValue: {
     padding: 4,

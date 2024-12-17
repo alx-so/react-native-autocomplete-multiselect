@@ -233,9 +233,9 @@ export const AutoComplete = (settings: Settings) => {
   );
 };
 
-AutoComplete.Select = Select;
 AutoComplete.Input = InputEnchanced;
 AutoComplete.InputSelect = InputSelect;
+AutoComplete.Select = Select;
 
 const styles = StyleSheet.create({
   container: {

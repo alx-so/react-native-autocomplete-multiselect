@@ -18,12 +18,17 @@ import {
   removeItemFromMultipleValue,
 } from './utils';
 import { Tag } from '../Tag';
+import { SelectSearchInput, type SelectSearchInputRef } from './SelectSearchInput';
+import { useSearch, type SearchItem } from '../../hooks/useSearch';
+import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';
+import { composePartialTextNode, removeTags } from '../../common/composePartialTextNode';
 
 export type SelectValue = string | string[];
 
 interface SelectProps {
   closeOnSelect?: boolean;
   disabled?: boolean;
+  searchable?: boolean;
   multiple?: boolean;
   open?: boolean;
   onOpen?: () => void;
@@ -42,10 +47,24 @@ const iconSize = 12;
 const textEllipsisMode = { ellipsizeMode: 'tail' as const, numberOfLines: 1 };
 
 export const Select: React.FC<SelectProps> = (props) => {
+  const seatchItems = React.useMemo<SearchItem[]>(() => {
+    const _items = (props.items || []) as SearchItem[];
+    return [..._items];
+  }, [props.items]);
+  const [autocompleteItems, setAutocompleteItems] = React.useState(seatchItems);
   const [isOpen, setIsOpen] = React.useState(props.open);
   const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
   const [value, setValue] = React.useState<SelectValue>(props.value || '');
   const selectValueExtraStyle: ViewStyle = { maxWidth: containerRect.width - iconSize * 2 };
+  const searchInputRef = React.useRef<SelectSearchInputRef>(null);
+  const [, startItemsListTransition] = React.useTransition();
+
+  const { handleSearch } = useSearch(seatchItems, {
+    wrapMatch: {
+      start: MATCH_TAG_START,
+      end: MATCH_TAG_END,
+    },
+  });
 
   useEffect(() => {
     setIsOpen(props.open);
@@ -80,10 +99,10 @@ export const Select: React.FC<SelectProps> = (props) => {
           return newValue;
         }
 
-        return [...(prevValue as string[]), item.label];
+        return [...(prevValue as string[]), removeTags(item.label)];
       }
 
-      return item.label;
+      return removeTags(item.label);
     });
 
     if (props.closeOnSelect) {
@@ -142,10 +161,25 @@ export const Select: React.FC<SelectProps> = (props) => {
         onPress={() => handleItemPress(item)}
         style={[styles.dropdownItem, selectedItemStyle]}
       >
-        <Text style={styles.dropdownItemText}>{item.label}</Text>
+        {composePartialTextNode(item.label, {
+          matchedTextNodeStyle: { fontWeight: 'bold' },
+          startStrPart: MATCH_TAG_START,
+          endStrPart: MATCH_TAG_END,
+        })}
       </Pressable>
     );
   };
+
+  const handleSearchChange = (val: string) => {
+    startItemsListTransition(() => {
+      const _items = handleSearch(val as string);
+      setAutocompleteItems(_items);
+    });
+  };
+
+  const dropdownHeader = props.searchable ? (
+    <SelectSearchInput onChange={handleSearchChange} refObj={searchInputRef} />
+  ) : null;
 
   return (
     <View style={styles.container} onLayout={handleLayout}>
@@ -164,8 +198,9 @@ export const Select: React.FC<SelectProps> = (props) => {
 
       {isOpen && (
         <DropdownList
+          header={dropdownHeader}
           containerRect={containerRect}
-          items={props.items}
+          items={autocompleteItems}
           renderItem={renderDropdownItem}
         />
       )}
@@ -197,6 +232,7 @@ const styles = StyleSheet.create({
     padding: 4,
     height: '100%',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     overflow: 'hidden',
   },
   selectValueText: {
