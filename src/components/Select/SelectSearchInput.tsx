@@ -6,6 +6,7 @@ export interface SelectSearchInputRef {
   focus: () => void;
   blur: () => void;
   clear: () => void;
+  getValue: () => string;
 }
 
 interface SelectSearchInputProps {
@@ -15,6 +16,7 @@ interface SelectSearchInputProps {
 
 export const SelectSearchInput: React.FC<SelectSearchInputProps> = (props) => {
   const inputRef = React.useRef<TextInput>(null);
+  const currentText = React.useRef<string>('');
 
   useImperativeHandle(props.refObj, () => ({
     focus() {
@@ -25,11 +27,17 @@ export const SelectSearchInput: React.FC<SelectSearchInputProps> = (props) => {
     },
     clear() {
       inputRef.current?.clear();
+      currentText.current = '';
+    },
+    getValue() {
+      return currentText.current;
     },
   }));
 
   const handleTextChange = (text: string) => {
     props.onChange(text);
+
+    currentText.current = text;
   };
 
   return <TextInput ref={inputRef} placeholder="Search" onChangeText={handleTextChange} />;
