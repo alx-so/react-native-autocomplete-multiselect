@@ -29,6 +29,7 @@ interface SelectProps {
   closeOnSelect?: boolean;
   disabled?: boolean;
   searchable?: boolean;
+  focusSearchOnOpen?: boolean;
   multiple?: boolean;
   open?: boolean;
   onOpen?: () => void;
@@ -76,6 +77,16 @@ export const Select: React.FC<SelectProps> = (props) => {
     } else {
       props.onClose?.();
     }
+
+    if (isOpen && props.searchable && props.focusSearchOnOpen) {
+      searchInputRef.current?.focus();
+    }
+
+    if (props.searchable && !isOpen) {
+      searchInputRef.current?.clear();
+      setAutocompleteItems(seatchItems);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
