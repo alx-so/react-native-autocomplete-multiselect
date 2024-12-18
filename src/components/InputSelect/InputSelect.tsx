@@ -75,9 +75,6 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
       const inputIsNotEmpty = Boolean(value);
       const hasSuggestions = autocompleteItems.length > 0;
 
-      console.log('inputIsNotEmpty', inputIsNotEmpty);
-      console.log('hasSuggestions', hasSuggestions);
-
       if (inputIsNotEmpty && !hasSuggestions) {
         console.log('No results found');
         setDropdownListNode(<DropdownNotice label="No results found" type="info" />);
@@ -185,7 +182,6 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
   };
 
   const removeSearchItems = (o: DropdownItem[]) => {
-    // const newSearchItems = seatchItems.filter((i) => i.id !== item.id);
     const newSearchItems = seatchItems.filter((i) => !o.some((item) => item.id === i.id));
     seatchItems.length = 0;
     seatchItems.push(...newSearchItems);

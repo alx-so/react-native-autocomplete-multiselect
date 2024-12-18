@@ -79,7 +79,9 @@ export const Select: React.FC<SelectProps> = (props) => {
     }
 
     if (isOpen && props.searchable && props.focusSearchOnOpen) {
-      searchInputRef.current?.focus();
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 50);
     }
 
     if (props.searchable && !isOpen) {
