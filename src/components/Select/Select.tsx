@@ -107,6 +107,14 @@ export const Select: React.FC<SelectProps> = (props) => {
       return newItemValue;
     });
 
+    if (props.searchable) {
+      setAutocompleteItems((prevItems) => {
+        const itemsWithoutSelected = prevItems.filter((i) => i.id !== item.id);
+
+        return itemsWithoutSelected;
+      });
+    }
+
     if (props.closeOnSelect) {
       setIsOpen(false);
     }
@@ -175,7 +183,12 @@ export const Select: React.FC<SelectProps> = (props) => {
   const handleSearchChange = (val: string) => {
     startItemsListTransition(() => {
       const _items = handleSearch(val as string);
-      setAutocompleteItems(_items);
+      console.log('handleSearchChange value', value);
+      const _itemsWithoutSelected = _items.filter(
+        (i) => !isItemSelected(removeTags(i.label), value)
+      );
+
+      setAutocompleteItems(_itemsWithoutSelected);
     });
   };
 
