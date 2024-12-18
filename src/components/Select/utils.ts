@@ -2,20 +2,20 @@ import type { ViewStyle } from 'react-native';
 import type { DropdownItem } from '../../types/common';
 import type { SelectValue } from './Select';
 
-export const removeItemFromMultipleValue = (item: DropdownItem, value: SelectValue) => {
+export const removeItemFromMultipleValue = (newValue: string, value: SelectValue) => {
   if (!Array.isArray(value)) {
     return value;
   }
 
-  return (value as string[]).filter((v) => v !== item.label);
+  return (value as string[]).filter((v) => v !== newValue);
 };
 
-export const isItemSelected = (item: DropdownItem, value: SelectValue) => {
+export const isItemSelected = (newValue: string, value: SelectValue) => {
   if (!Array.isArray(value)) {
-    return value === item.label;
+    return value === newValue;
   }
 
-  return value.includes(item.label);
+  return value.includes(newValue);
 };
 
 export const composeSelectedDropdownItemStyle = (

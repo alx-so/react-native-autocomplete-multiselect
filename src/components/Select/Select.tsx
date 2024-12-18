@@ -92,17 +92,19 @@ export const Select: React.FC<SelectProps> = (props) => {
 
   const handleItemPress = (item: DropdownItem) => {
     setValue((prevValue) => {
+      const newItemValue = props.searchable ? removeTags(item.label) : item.label;
+
       if (props.multiple) {
-        if (isItemSelected(item, value)) {
-          const newValue = removeItemFromMultipleValue(item, value);
+        if (isItemSelected(newItemValue, prevValue)) {
+          const newValue = removeItemFromMultipleValue(newItemValue, prevValue);
 
           return newValue;
         }
 
-        return [...(prevValue as string[]), removeTags(item.label)];
+        return [...(prevValue as string[]), newItemValue];
       }
 
-      return removeTags(item.label);
+      return newItemValue;
     });
 
     if (props.closeOnSelect) {
