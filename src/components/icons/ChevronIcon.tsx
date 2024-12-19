@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
-import type { PositionType } from '../types/common';
+import type { PositionType } from '../../types/common';
 
 const defaultSize = 16;
 

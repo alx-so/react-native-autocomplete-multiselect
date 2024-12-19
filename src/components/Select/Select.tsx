@@ -8,7 +8,7 @@ import {
   type LayoutRectangle,
   type ViewStyle,
 } from 'react-native';
-import ChevronIcon from '../ChevronIcon';
+import ChevronIcon from '../icons/ChevronIcon';
 import { DropdownList } from '../DropdownList';
 import { defaultLayloutRect } from '../../utils';
 import type { DropdownItem } from '../../types/common';
@@ -17,7 +17,7 @@ import {
   isItemSelected,
   removeItemFromMultipleValue,
 } from './utils';
-import { Tag } from '../Tag';
+import { Tag } from '../Tag/Tag';
 import { SelectSearchInput, type SelectSearchInputRef } from './SelectSearchInput';
 import { useSearch, type SearchItem } from '../../hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import CrossIcon from './CrossIcon';
+import CrossIcon from '../icons/CrossIcon';
 import React from 'react';
 
 export const Tag: TagComponent = (props) => {

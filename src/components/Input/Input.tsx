@@ -10,8 +10,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import type { TagItem } from '../../types/common';
-import { TagListMemoized } from '../TagList';
-import { Tag } from '../Tag';
+import { TagListMemoized } from '../Tag/TagList';
+import { Tag } from '../Tag/Tag';
 
 export type InputValue = string | string[];
 

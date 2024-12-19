@@ -7,7 +7,7 @@ import { Input, type InputRefObject, type InputValue } from '../Input';
 import { useSearch, type SearchItem } from '../../hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';
 import { composePartialTextNode, removeTags } from '../../common/composePartialTextNode';
-import { DropdownNotice } from '../DropdownNotice';
+import { DropdownNotice } from '../DropdownList/DropdownNotice';
 
 export type SelectValue = string | string[];
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, type InputProps, type InputValue } from './Input';
-import { AddTagDropdownNotice } from '../AddTagDropdownNotice';
+import { AddTagDropdownNotice } from '../DropdownList/AddTagDropdownNotice';
 
 export const InputEnchanced: React.FC<InputProps> = (props) => {
   const [endNode, setEndNode] = React.useState<React.ReactNode | null>(null);
