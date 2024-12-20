@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Pressable, StyleSheet, type LayoutChangeEvent, type LayoutRectangle } from 'react-native';
+import { Pressable, StyleSheet, type LayoutChangeEvent } from 'react-native';
 import { DropdownList } from '../DropdownList';
-import { defaultLayloutRect } from '../../utils';
-import type { DropdownItem, TagItem } from '../../types/common';
+import { defaultLayoutRect } from '../../utils';
+import type { ContainerRect, DropdownItem, TagItem } from '../../types/common';
 import { Input, type InputRefObject, type InputValue } from '../Input';
 import { useSearch, type SearchItem } from '../../hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';
@@ -32,20 +32,20 @@ interface InputSelectProps {
 // const textEllipsisMode = { ellipsizeMode: 'tail' as const, numberOfLines: 1 };
 
 export const InputSelect: React.FC<InputSelectProps> = (props) => {
-  const seatchItems = React.useMemo<SearchItem[]>(() => {
+  const searchItems = React.useMemo<SearchItem[]>(() => {
     const _items = (props.items || []) as SearchItem[];
     return [..._items];
   }, [props.items]);
-  const [autocompleteItems, setAutocompleteItems] = React.useState(seatchItems);
+  const [autocompleteItems, setAutocompleteItems] = React.useState(searchItems);
   const [isOpen, setIsOpen] = React.useState(props.open);
-  const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
+  const [containerRect, setContainerRect] = React.useState<ContainerRect>(defaultLayoutRect);
   const [value, setValue] = React.useState<SelectValue>(props.value || '');
   const [dropdownListNode, setDropdownListNode] = React.useState<React.ReactNode | null>(null);
   const inputRef = React.useRef<InputRefObject>(null);
   const [, startItemsListTransition] = React.useTransition();
   const currentTags = React.useRef<TagItem[]>([]);
 
-  const { handleSearch } = useSearch(seatchItems, {
+  const { handleSearch } = useSearch(searchItems, {
     wrapMatch: {
       start: MATCH_TAG_START,
       end: MATCH_TAG_END,
@@ -119,7 +119,9 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
   };
 
   const handleLayout = (e: LayoutChangeEvent) => {
-    setContainerRect(e.nativeEvent.layout);
+    e.target.measure((x, y, width, height, pageX, pageY) => {
+      setContainerRect({ width, height, pageX, pageY });
+    });
   };
 
   const renderDropdownItem = (item: DropdownItem) => {
@@ -148,7 +150,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
     if (props.disabled) return;
 
     if (!props.multiple) {
-      setAutocompleteItems([...seatchItems]);
+      setAutocompleteItems([...searchItems]);
     }
 
     setIsOpen(true);
@@ -182,17 +184,17 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
   };
 
   const removeSearchItems = (o: DropdownItem[]) => {
-    const newSearchItems = seatchItems.filter((i) => !o.some((item) => item.id === i.id));
-    seatchItems.length = 0;
-    seatchItems.push(...newSearchItems);
+    const newSearchItems = searchItems.filter((i) => !o.some((item) => item.id === i.id));
+    searchItems.length = 0;
+    searchItems.push(...newSearchItems);
     setAutocompleteItems(newSearchItems);
   };
 
   const addSearchItems = (o: DropdownItem[]) => {
-    const newSearchItems = seatchItems.concat(o).sort((a, b) => a.label.localeCompare(b.label));
+    const newSearchItems = searchItems.concat(o).sort((a, b) => a.label.localeCompare(b.label));
 
-    seatchItems.length = 0;
-    seatchItems.push(...newSearchItems);
+    searchItems.length = 0;
+    searchItems.push(...newSearchItems);
     setAutocompleteItems(newSearchItems);
   };
 

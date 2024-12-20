@@ -1,21 +1,15 @@
 import React from 'react';
-import {
-  Keyboard,
-  useWindowDimensions,
-  type LayoutRectangle,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
-import { Position } from '../../types/common';
+import { Keyboard, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import { Position, type ContainerRect } from '../../types/common';
 
 type DropdownPosition = Position.Top | Position.Bottom;
 
-const keyboradDefaultDimensions = { height: 0, width: 0 };
+const keyboardDefaultDimensions = { height: 0, width: 0 };
 
-export const useContainerStyle = (rect: LayoutRectangle, dropdownHeight: number) => {
+export const useContainerStyle = (rect: ContainerRect, maxDropdownHeight: number) => {
   const { deviceDimensions, keyboardDimensions } = useNativeElementsInfo();
   const position = calcDropdownPosition(rect, {
-    dropdownHeight,
+    maxDropdownHeight,
     windowHeight: deviceDimensions.height,
     keyboardHeight: keyboardDimensions.height,
   });
@@ -26,7 +20,7 @@ export const useContainerStyle = (rect: LayoutRectangle, dropdownHeight: number)
 };
 
 const useNativeElementsInfo = () => {
-  const [keyboardDimensions, setKeyboardDimensions] = React.useState(keyboradDefaultDimensions);
+  const [keyboardDimensions, setKeyboardDimensions] = React.useState(keyboardDefaultDimensions);
   const deviceDimensions = useWindowDimensions();
 
   React.useEffect(() => {
@@ -38,7 +32,7 @@ const useNativeElementsInfo = () => {
     });
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardDimensions(keyboradDefaultDimensions);
+      setKeyboardDimensions(keyboardDefaultDimensions);
     });
 
     return () => {
@@ -61,18 +55,18 @@ const getContainerStylePosition = (
 };
 
 const calcDropdownPosition = (
-  rect: LayoutRectangle,
+  rect: ContainerRect,
   opts: {
-    dropdownHeight: number;
+    maxDropdownHeight: number;
     windowHeight: number;
     keyboardHeight: number;
   }
 ) => {
-  const yBottomPosition = rect.y + rect.height;
-  const yBottomPositionWithDropdown = yBottomPosition + opts.dropdownHeight;
+  const yPos = rect.pageY + rect.height;
   const windowHeightWithoutKeyboard = opts.windowHeight - opts.keyboardHeight;
+  const spaceAvaiableAfterEl = windowHeightWithoutKeyboard - yPos;
 
-  if (yBottomPositionWithDropdown > windowHeightWithoutKeyboard) {
+  if (spaceAvaiableAfterEl < opts.maxDropdownHeight) {
     return Position.Top;
   }
 

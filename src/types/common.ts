@@ -17,3 +17,10 @@ export interface DropdownItem {
   id: string | number;
   label: string;
 }
+
+export interface ContainerRect {
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}

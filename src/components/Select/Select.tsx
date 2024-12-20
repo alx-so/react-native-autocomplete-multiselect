@@ -5,13 +5,12 @@ import {
   Text,
   View,
   type LayoutChangeEvent,
-  type LayoutRectangle,
   type ViewStyle,
 } from 'react-native';
 import ChevronIcon from '../icons/ChevronIcon';
 import { DropdownList } from '../DropdownList';
-import { defaultLayloutRect } from '../../utils';
-import type { DropdownItem } from '../../types/common';
+import { defaultLayoutRect } from '../../utils';
+import type { ContainerRect, DropdownItem } from '../../types/common';
 import {
   composeSelectedDropdownItemStyle,
   isItemSelected,
@@ -48,19 +47,19 @@ const iconSize = 12;
 const textEllipsisMode = { ellipsizeMode: 'tail' as const, numberOfLines: 1 };
 
 export const Select: React.FC<SelectProps> = (props) => {
-  const seatchItems = React.useMemo<SearchItem[]>(() => {
+  const searchItems = React.useMemo<SearchItem[]>(() => {
     const _items = (props.items || []) as SearchItem[];
     return [..._items];
   }, [props.items]);
-  const [autocompleteItems, setAutocompleteItems] = React.useState(seatchItems);
+  const [autocompleteItems, setAutocompleteItems] = React.useState(searchItems);
   const [isOpen, setIsOpen] = React.useState(props.open);
-  const [containerRect, setContainerRect] = React.useState<LayoutRectangle>(defaultLayloutRect);
+  const [containerRect, setContainerRect] = React.useState<ContainerRect>(defaultLayoutRect);
   const [value, setValue] = React.useState<SelectValue>(props.value || '');
   const selectValueExtraStyle: ViewStyle = { maxWidth: containerRect.width - iconSize * 2 };
   const searchInputRef = React.useRef<SelectSearchInputRef>(null);
   const [, startItemsListTransition] = React.useTransition();
 
-  const { handleSearch } = useSearch(seatchItems, {
+  const { handleSearch } = useSearch(searchItems, {
     wrapMatch: {
       start: MATCH_TAG_START,
       end: MATCH_TAG_END,
@@ -86,7 +85,7 @@ export const Select: React.FC<SelectProps> = (props) => {
 
     if (props.searchable && !isOpen) {
       searchInputRef.current?.clear();
-      setAutocompleteItems(seatchItems);
+      setAutocompleteItems(searchItems);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,7 +134,9 @@ export const Select: React.FC<SelectProps> = (props) => {
   };
 
   const handleLayout = (e: LayoutChangeEvent) => {
-    setContainerRect(e.nativeEvent.layout);
+    e.target.measure((x, y, width, height, pageX, pageY) => {
+      setContainerRect({ width, height, pageX, pageY });
+    });
   };
 
   const renderValue = () => {

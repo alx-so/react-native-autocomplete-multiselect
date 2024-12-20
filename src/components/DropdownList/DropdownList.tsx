@@ -1,12 +1,5 @@
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  type LayoutRectangle,
-  type ScrollViewProps,
-  type ViewStyle,
-} from 'react-native';
-import { type DropdownItem } from '../../types/common';
+import { ScrollView, StyleSheet, View, type ScrollViewProps, type ViewStyle } from 'react-native';
+import { type ContainerRect, type DropdownItem } from '../../types/common';
 import React from 'react';
 import { useContainerStyle } from './utils';
 
@@ -15,13 +8,13 @@ interface DropdownListProps {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   items?: DropdownItem[];
-  containerRect: LayoutRectangle;
+  containerRect: ContainerRect;
   renderItem: (item: DropdownItem) => React.ReactNode;
   scrollViewProps?: ScrollViewProps;
 }
 
 // TODO: make ajustable via props
-const maxDropdownHeight = 200;
+const maxDropdownHeight = 100;
 
 export const DropdownList: React.FC<DropdownListProps> = (props) => {
   const items = props.items || [];
@@ -44,7 +37,7 @@ export const DropdownList: React.FC<DropdownListProps> = (props) => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    maxHeight: maxDropdownHeight / 2,
+    maxHeight: maxDropdownHeight,
   },
   dropdown: {
     minWidth: '100%',

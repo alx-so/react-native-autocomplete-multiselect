@@ -1,9 +1,8 @@
-import type { LayoutRectangle } from 'react-native';
 import type { DropdownItem } from './types/common';
 
-export const defaultLayloutRect: LayoutRectangle = {
-  x: 0,
-  y: 0,
+export const defaultLayoutRect = {
+  pageX: 0,
+  pageY: 0,
   width: 0,
   height: 0,
 };
