@@ -8,6 +8,8 @@ import { useSearch, type SearchItem } from '../../hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';
 import { composePartialTextNode, removeTags } from '../../common/composePartialTextNode';
 import { DropdownNotice } from '../DropdownList/DropdownNotice';
+import { composeSelectedDropdownItemStyle, isItemSelected } from '../Select/utils';
+import { getThemeStyles } from '../../styles/theme';
 
 export type SelectValue = string | string[];
 
@@ -28,8 +30,7 @@ interface InputSelectProps {
   items: DropdownItem[];
 }
 
-// const iconSize = 12;
-// const textEllipsisMode = { ellipsizeMode: 'tail' as const, numberOfLines: 1 };
+const theme = getThemeStyles();
 
 export const InputSelect: React.FC<InputSelectProps> = (props) => {
   const searchItems = React.useMemo<SearchItem[]>(() => {
@@ -76,7 +77,6 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
       const hasSuggestions = autocompleteItems.length > 0;
 
       if (inputIsNotEmpty && !hasSuggestions) {
-        console.log('No results found');
         setDropdownListNode(<DropdownNotice label="No results found" type="info" />);
       } else {
         setDropdownListNode(
@@ -129,14 +129,25 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
       return props.renderDropdownItem(item);
     }
 
-    // const selectedItemStyle = composeSelectedDropdownItemStyle(
-    //   item,
-    //   value,
-    //   styles.dropdownItemSelected
+    // TODO: item can be removed or stay selected in list
+    const currentValue = props.multiple ? currentTags.current.map((t) => t.label) : value;
+    const selectedItemStyle = composeSelectedDropdownItemStyle(
+      item,
+      currentValue,
+      styles.dropdownItemSelected
+    );
+
+    // const isSelected = isItemSelected(
+    //   props.searchable ? removeTags(item.label) : item.label,
+    //   value
     // );
 
     return (
-      <Pressable key={item.id} onPress={() => handleItemPress(item)} style={[styles.dropdownItem]}>
+      <Pressable
+        key={item.id}
+        onPress={() => handleItemPress(item)}
+        style={[styles.dropdownItem, selectedItemStyle]}
+      >
         {composePartialTextNode(item.label, {
           matchedTextNodeStyle: { fontWeight: 'bold' },
           startStrPart: MATCH_TAG_START,
@@ -161,6 +172,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
   };
 
   const handleTagsListChange = (tags: TagItem[]) => {
+    console.log(tags);
     const isAdded = tags.length > currentTags.current.length;
     const isRemoved = tags.length < currentTags.current.length;
     // const isEdited = tags.length === currentTags.current.length;
@@ -236,13 +248,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 'auto',
-    borderColor: 'black',
-    borderWidth: 1,
   },
   dropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
     zIndex: 99999,
   },
   selectValue: {
@@ -260,16 +267,6 @@ const styles = StyleSheet.create({
     right: 4,
     top: 18,
   },
-  dropdownItem: {
-    paddingVertical: 5,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    borderBottomWidth: 0.5,
-    borderColor: 'grey',
-  },
-  dropdownItemSelected: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  dropdownItemText: {
-    paddingHorizontal: 4,
-  },
+  dropdownItem: theme.dropdownItem,
+  dropdownItemSelected: theme.dropdownItemSelected,
 });

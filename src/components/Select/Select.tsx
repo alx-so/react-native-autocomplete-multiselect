@@ -21,6 +21,8 @@ import { SelectSearchInput, type SelectSearchInputRef } from './SelectSearchInpu
 import { useSearch, type SearchItem } from '../../hooks/useSearch';
 import { MATCH_TAG_END, MATCH_TAG_START } from '../../constants';
 import { composePartialTextNode, removeTags } from '../../common/composePartialTextNode';
+import { getThemeStyles } from '../../styles/theme';
+import CheckIcon from '../icons/CheckIcon';
 
 export type SelectValue = string | string[];
 
@@ -45,6 +47,7 @@ interface SelectProps {
 
 const iconSize = 12;
 const textEllipsisMode = { ellipsizeMode: 'tail' as const, numberOfLines: 1 };
+const theme = getThemeStyles();
 
 export const Select: React.FC<SelectProps> = (props) => {
   const searchItems = React.useMemo<SearchItem[]>(() => {
@@ -174,6 +177,11 @@ export const Select: React.FC<SelectProps> = (props) => {
       return props.renderDropdownItem(item);
     }
 
+    const isSelected = isItemSelected(
+      props.searchable ? removeTags(item.label) : item.label,
+      value
+    );
+
     const selectedItemStyle = composeSelectedDropdownItemStyle(
       item,
       value,
@@ -191,6 +199,7 @@ export const Select: React.FC<SelectProps> = (props) => {
           startStrPart: MATCH_TAG_START,
           endStrPart: MATCH_TAG_END,
         })}
+        {isSelected && <CheckIcon containerStyle={{ marginLeft: 10 }} />}
       </Pressable>
     );
   };
@@ -211,8 +220,10 @@ export const Select: React.FC<SelectProps> = (props) => {
     <SelectSearchInput onChange={handleSearchChange} refObj={searchInputRef} />
   ) : null;
 
+  const containerThemeStyle = [theme.select, isOpen ? theme.selectFocused : {}];
+
   return (
-    <View style={styles.container} onLayout={handleLayout}>
+    <View style={[styles.container, containerThemeStyle]} onLayout={handleLayout}>
       <View style={[styles.selectValue, selectValueExtraStyle]}>
         {!props.multiple ? renderValue() : renderMultipleValues()}
       </View>
@@ -247,8 +258,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 'auto',
-    borderColor: 'black',
-    borderWidth: 1,
   },
   select: {
     position: 'absolute',
@@ -267,6 +276,8 @@ const styles = StyleSheet.create({
   },
   selectValueText: {
     width: '100%',
+    height: '100%',
+    paddingHorizontal: 14,
     verticalAlign: 'middle',
   },
   chevron: {
@@ -274,16 +285,6 @@ const styles = StyleSheet.create({
     right: 4,
     top: 18,
   },
-  dropdownItem: {
-    paddingVertical: 5,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    borderBottomWidth: 0.5,
-    borderColor: 'grey',
-  },
-  dropdownItemSelected: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  dropdownItemText: {
-    paddingHorizontal: 4,
-  },
+  dropdownItem: theme.dropdownItem,
+  dropdownItemSelected: theme.dropdownItemSelected,
 });

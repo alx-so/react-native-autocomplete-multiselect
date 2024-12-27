@@ -52,13 +52,13 @@ type TagComponent = React.FC<TagProps>;
 
 const styles = StyleSheet.create({
   tag: {
-    height: 40,
-    backgroundColor: '#f1f1f1',
+    height: 38,
+    backgroundColor: '#f3f4f6',
     padding: 8,
     borderRadius: 4,
-    marginRight: 8,
+    marginRight: 4,
+    justifyContent: 'center',
     marginBottom: 4,
-    borderWidth: 1,
   },
   tagWithRemoveIcon: {
     display: 'flex',

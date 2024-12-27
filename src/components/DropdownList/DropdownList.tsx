@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, View, type ScrollViewProps, type ViewStyle } fr
 import { type ContainerRect, type DropdownItem } from '../../types/common';
 import React from 'react';
 import { useContainerStyle } from './utils';
+import { getThemeStyles } from '../../styles/theme';
 
 interface DropdownListProps {
   style?: ViewStyle;
@@ -14,7 +15,8 @@ interface DropdownListProps {
 }
 
 // TODO: make ajustable via props
-const maxDropdownHeight = 100;
+const maxDropdownHeight = 150;
+const theme = getThemeStyles();
 
 export const DropdownList: React.FC<DropdownListProps> = (props) => {
   const items = props.items || [];
@@ -38,12 +40,12 @@ export const DropdownList: React.FC<DropdownListProps> = (props) => {
 const styles = StyleSheet.create({
   scrollView: {
     maxHeight: maxDropdownHeight,
+    ...theme.dropdownScrollView,
   },
   dropdown: {
     minWidth: '100%',
     position: 'absolute',
     zIndex: 9999999999999,
-    backgroundColor: 'white',
-    borderWidth: 1,
+    ...theme.dropdown,
   },
 });

@@ -14,7 +14,7 @@ export const useContainerStyle = (rect: ContainerRect, maxDropdownHeight: number
     keyboardHeight: keyboardDimensions.height,
   });
 
-  const containerStyle = getContainerStylePosition(position, rect.height);
+  const containerStyle = getContainerStylePosition(position, rect.height, 0);
 
   return containerStyle;
 };
@@ -46,11 +46,12 @@ const useNativeElementsInfo = () => {
 
 const getContainerStylePosition = (
   pos: DropdownPosition,
-  containerHeight: number
+  containerHeight: number,
+  margin = 0
 ): StyleProp<ViewStyle> => {
   return {
-    top: pos === 'top' ? 'auto' : containerHeight,
-    bottom: pos === 'top' ? containerHeight : 'auto',
+    top: pos === 'top' ? 'auto' : containerHeight + margin,
+    bottom: pos === 'top' ? containerHeight + margin : 'auto',
   };
 };
 

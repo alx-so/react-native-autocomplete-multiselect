@@ -1,6 +1,5 @@
 import React, { useEffect, useImperativeHandle } from 'react';
 import {
-  Alert,
   StyleSheet,
   TextInput,
   View,
@@ -12,6 +11,8 @@ import {
 import type { TagItem } from '../../types/common';
 import { TagListMemoized } from '../Tag/TagList';
 import { Tag } from '../Tag/Tag';
+import { composeTagItem, composeTags, composeValue, confirmTagRemoval } from './utils';
+import { getThemeStyles } from '../../styles/theme';
 
 export type InputValue = string | string[];
 
@@ -42,6 +43,8 @@ export interface InputProps {
   };
 }
 
+const theme = getThemeStyles();
+
 export const Input: React.FC<InputProps> = (props) => {
   const isControlledComponent = typeof props.value !== 'undefined';
   const inputDefaultValue = isControlledComponent ? props.value : props.defaultValue;
@@ -51,6 +54,10 @@ export const Input: React.FC<InputProps> = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const [value, setValue] = React.useState(composeValue(inputDefaultValue, props.multiple));
   const [tags, setTags] = React.useState<TagItem[]>(tagsDefaultValue);
+  const [inputThemeStyle, setInputThemeStyles] = React.useState<ViewStyle>(
+    theme.inputOuterContainer
+  );
+  const currentInputValue = isControlledComponent ? (props.value as string) : value;
 
   useImperativeHandle(props.refObject, () => ({
     focus: () => {
@@ -62,13 +69,13 @@ export const Input: React.FC<InputProps> = (props) => {
     setTags: (tagsList) => setTags(tagsList),
   }));
 
-  useEffect(() => {
-    if (!isControlledComponent) return;
+  // useEffect(() => {
+  //   if (!isControlledComponent) return;
 
-    setValue(props.value as string);
+  //   setValue(props.value as string);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.value]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [props.value]);
 
   useEffect(() => {
     props.tagProps?.onChange?.(tags);
@@ -107,6 +114,8 @@ export const Input: React.FC<InputProps> = (props) => {
   const handleBackspacePress = () => {
     const _isCurrentInputEmpty = isCurrentInputEmpty();
 
+    console.log('_isCurrentInputEmpty', _isCurrentInputEmpty);
+
     if (_isCurrentInputEmpty) {
       if (props.tagProps?.removeMode === 'delete-modify') {
         removeLastTagAndSetInputValue();
@@ -123,10 +132,15 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const handleFocus = () => {
     props.onFocus?.();
+    setInputThemeStyles({
+      ...theme.inputOuterContainer,
+      ...theme.inputFocused,
+    });
   };
 
   const handleBlur = () => {
     props.onBlur?.();
+    setInputThemeStyles(theme.inputOuterContainer);
   };
 
   const renderTag = (tag: TagItem) => {
@@ -171,7 +185,7 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const getLastTag = () => tags[getLastTagIndex()];
 
-  const isCurrentInputEmpty = () => value.length === 0;
+  const isCurrentInputEmpty = () => !currentInputValue || currentInputValue.length === 0;
 
   const isPressedKeyBackspace = (ev: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     const key = ev.nativeEvent.key;
@@ -189,7 +203,10 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   return (
-    <View style={[styles.container, props.containerStyle]} onLayout={props.onContainerLayoutChange}>
+    <View
+      style={[styles.container, props.containerStyle, inputThemeStyle]}
+      onLayout={props.onContainerLayoutChange}
+    >
       {props.startNode && props.startNode}
 
       <View style={styles.innerContainer}>
@@ -197,7 +214,7 @@ export const Input: React.FC<InputProps> = (props) => {
 
         <TextInput
           ref={inputRef}
-          value={value}
+          value={currentInputValue}
           style={styles.input}
           onChangeText={handleTextChange}
           onSubmitEditing={handleSubmitEditing}
@@ -212,60 +229,11 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 };
 
-const composeValue = (value: InputValue | undefined, multiple?: boolean): string => {
-  if (multiple || !value) {
-    return '';
-  }
-
-  return value as string;
-};
-
-const composeTags = (value?: InputValue): TagItem[] => {
-  if (!value) {
-    return [];
-  }
-
-  if (!Array.isArray(value)) {
-    return [composeTagItem(value)];
-  }
-
-  return value.map((label) => composeTagItem(label));
-};
-
-const composeTagItem = (label: string): TagItem => {
-  return {
-    id: new Date().getTime(),
-    label,
-  };
-};
-
-const confirmTagRemoval = async (tag: TagItem | undefined) => {
-  if (!tag) return;
-
-  return new Promise((resolve) => {
-    // TODO: localize the default alert message
-    Alert.alert('Are you sure?', 'Do you want to the tag?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-        onPress: () => resolve(false),
-      },
-      {
-        text: 'OK',
-        onPress: () => resolve(true),
-      },
-    ]);
-  });
-};
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     minHeight: 54,
     width: '100%',
     height: 'auto',
-    borderColor: 'black',
-    borderWidth: 1,
   },
   innerContainer: {
     padding: 4,
@@ -277,8 +245,6 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     flexGrow: 1,
-    // margin: 0,
-    marginLeft: 3,
-    padding: 4,
+    ...theme.input,
   },
 });

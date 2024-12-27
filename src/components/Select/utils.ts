@@ -23,11 +23,7 @@ export const composeSelectedDropdownItemStyle = (
   value: SelectValue,
   selectedStyle: ViewStyle
 ): ViewStyle => {
-  if (Array.isArray(value) && value.includes(item.label)) {
-    return selectedStyle;
-  }
-
-  if (item.label === value) {
+  if (isItemSelected(item.label, value)) {
     return selectedStyle;
   }
 
