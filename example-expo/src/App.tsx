@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text, Button } from 'react-native';
-import { AutoComplete } from 'react-native-autocomplete-multiselect';
+import { Input, InputSelect, Select } from 'react-native-autocomplete-multiselect';
 import { getTestSearchItems } from '../../src/utils';
 import React from 'react';
 
@@ -17,7 +17,7 @@ export default function App() {
 
       <View style={style}>
         <Text>Input tags (multuple=true), freeform</Text>
-        <AutoComplete.Input
+        <Input
           multiple
           defaultValue={['asdf']}
           tagProps={{
@@ -28,17 +28,17 @@ export default function App() {
 
       <View style={style}>
         <Text>InputSelect no tags (multuple=false), suggestions</Text>
-        <AutoComplete.InputSelect items={seatchItems} closeOnSelect />
+        <InputSelect items={seatchItems} closeOnSelect />
       </View>
 
       <View style={style}>
         <Text>InputSelect tags (multuple=true), suggestions</Text>
-        <AutoComplete.InputSelect items={seatchItems} multiple closeOnSelect={false} />
+        <InputSelect items={seatchItems} multiple closeOnSelect={false} />
       </View>
 
       <View style={style}>
         <Text>Select (multuple=false), suggestions</Text>
-        <AutoComplete.Select
+        <Select
           items={seatchItems}
           open={isSelectOpen}
           onOpen={() => console.log('onOpen')}
@@ -48,7 +48,7 @@ export default function App() {
 
       <View style={style}>
         <Text>Select (multuple=true), suggestions</Text>
-        <AutoComplete.Select
+        <Select
           multiple
           items={seatchItems}
           open={isSelectOpen}
@@ -59,7 +59,7 @@ export default function App() {
 
       <View style={style}>
         <Text>Select (multuple=true), suggestions with search</Text>
-        <AutoComplete.Select
+        <Select
           searchable
           multiple
           items={seatchItems}

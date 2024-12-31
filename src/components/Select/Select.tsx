@@ -138,7 +138,7 @@ export const Select: React.FC<SelectProps> = (props) => {
 
   const handleLayout = (e: LayoutChangeEvent) => {
     e.target.measure((x, y, width, height, pageX, pageY) => {
-      setContainerRect({ width, height, pageX, pageY });
+      setContainerRect({ x, y, width, height, pageX, pageY });
     });
   };
 

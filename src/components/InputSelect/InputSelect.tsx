@@ -122,7 +122,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
 
   const handleLayout = (e: LayoutChangeEvent) => {
     e.target.measure((x, y, width, height, pageX, pageY) => {
-      setContainerRect({ width, height, pageX, pageY });
+      setContainerRect({ x, y, width, height, pageX, pageY });
     });
   };
 

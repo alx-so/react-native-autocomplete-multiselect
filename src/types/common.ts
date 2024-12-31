@@ -23,4 +23,6 @@ export interface ContainerRect {
   height: number;
   pageX: number;
   pageY: number;
+  x?: number;
+  y?: number;
 }
