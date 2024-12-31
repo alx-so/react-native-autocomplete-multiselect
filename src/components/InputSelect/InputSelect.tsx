@@ -172,7 +172,6 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
   };
 
   const handleTagsListChange = (tags: TagItem[]) => {
-    console.log(tags);
     const isAdded = tags.length > currentTags.current.length;
     const isRemoved = tags.length < currentTags.current.length;
     // const isEdited = tags.length === currentTags.current.length;

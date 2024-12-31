@@ -62,13 +62,11 @@ export const useSearch = (items: SearchItem[], opts: SearchOpts) => {
   const warmUpSearch = () => {
     if (isSearchIndexReady.current) return;
 
-    const startTime = performance.now();
+    // const startTime = performance.now();
     handleSearch('a');
-    const endTime = performance.now();
+    // const endTime = performance.now();
 
     isSearchIndexReady.current = true;
-
-    console.log('Warm Up Search Index time MS:', endTime - startTime);
   };
 
   return { handleSearch };
