@@ -10,6 +10,7 @@ import { composePartialTextNode, removeTags } from '../../common/composePartialT
 import { DropdownNotice } from '../DropdownList/DropdownNotice';
 import { composeSelectedDropdownItemStyle, isItemSelected } from '../Select/utils';
 import { getThemeStyles } from '../../styles/theme';
+import CheckIcon from '../icons/CheckIcon';
 
 export type SelectValue = string | string[];
 
@@ -101,6 +102,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
       setValue('');
     } else {
       setValue(removeTags(item.label));
+      setAutocompleteItems([...searchItems]);
     }
 
     if (props.closeOnSelect) {
@@ -137,10 +139,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
       styles.dropdownItemSelected
     );
 
-    // const isSelected = isItemSelected(
-    //   props.searchable ? removeTags(item.label) : item.label,
-    //   value
-    // );
+    const isSelected = isItemSelected(removeTags(item.label), value);
 
     return (
       <Pressable
@@ -153,6 +152,7 @@ export const InputSelect: React.FC<InputSelectProps> = (props) => {
           startStrPart: MATCH_TAG_START,
           endStrPart: MATCH_TAG_END,
         })}
+        {isSelected && <CheckIcon containerStyle={{ marginLeft: 10 }} />}
       </Pressable>
     );
   };

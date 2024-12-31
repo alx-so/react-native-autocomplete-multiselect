@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     ...theme.dropdownScrollView,
   },
   dropdown: {
+    maxWidth: '100%',
     minWidth: '100%',
     position: 'absolute',
     zIndex: 9999999999999,

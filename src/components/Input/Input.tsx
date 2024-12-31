@@ -19,7 +19,9 @@ export type InputValue = string | string[];
 export interface InputRefObject {
   focus: () => void;
   blur: () => void;
+  clear: () => void;
   setTags: (tags: TagItem[]) => void;
+  addTag: (tag: TagItem) => void;
 }
 
 export interface InputProps {
@@ -67,6 +69,14 @@ export const Input: React.FC<InputProps> = (props) => {
       inputRef.current?.blur();
     },
     setTags: (tagsList) => setTags(tagsList),
+    addTag: (tag) => {
+      const newTags = [...tags, tag];
+
+      setTags(newTags);
+    },
+    clear: () => {
+      setValue('');
+    },
   }));
 
   // useEffect(() => {
@@ -113,8 +123,6 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const handleBackspacePress = () => {
     const _isCurrentInputEmpty = isCurrentInputEmpty();
-
-    console.log('_isCurrentInputEmpty', _isCurrentInputEmpty);
 
     if (_isCurrentInputEmpty) {
       if (props.tagProps?.removeMode === 'delete-modify') {

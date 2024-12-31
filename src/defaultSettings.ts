@@ -1,7 +1,8 @@
 import type { Settings } from './types/settings';
 
 export const defaultSettings: Settings = {
-  type: 'select',
+  items: [],
+  type: 'input',
   blurOnSubmit: true,
   isSelectSearchVisible: true,
   tagBackspaceDeleteBehavior: 'delete-modify',

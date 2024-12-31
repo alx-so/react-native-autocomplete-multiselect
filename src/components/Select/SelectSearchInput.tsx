@@ -1,6 +1,9 @@
 import React from 'react';
 import { useImperativeHandle } from 'react';
-import { TextInput } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
+import CrossIcon from '../icons/CrossIcon';
+import SearchIcon from '../icons/SearchIcon';
+import { getThemeColors } from '../../styles/theme';
 
 export interface SelectSearchInputRef {
   focus: () => void;
@@ -14,6 +17,8 @@ interface SelectSearchInputProps {
   onChange: (value: string) => void;
 }
 
+const theme = getThemeColors();
+
 export const SelectSearchInput: React.FC<SelectSearchInputProps> = (props) => {
   const inputRef = React.useRef<TextInput>(null);
   const currentText = React.useRef<string>('');
@@ -26,8 +31,7 @@ export const SelectSearchInput: React.FC<SelectSearchInputProps> = (props) => {
       inputRef.current?.blur();
     },
     clear() {
-      inputRef.current?.clear();
-      currentText.current = '';
+      handleClear();
     },
     getValue() {
       return currentText.current;
@@ -40,5 +44,43 @@ export const SelectSearchInput: React.FC<SelectSearchInputProps> = (props) => {
     currentText.current = text;
   };
 
-  return <TextInput ref={inputRef} placeholder="Search" onChangeText={handleTextChange} />;
+  const handleClear = () => {
+    inputRef.current?.clear();
+    props.onChange('');
+    currentText.current = '';
+  };
+
+  return (
+    <View style={styles.container}>
+      <SearchIcon />
+      <TextInput
+        style={styles.textInput}
+        ref={inputRef}
+        placeholder="Search"
+        onChangeText={handleTextChange}
+        numberOfLines={1}
+      />
+      <CrossIcon onPress={handleClear} />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: theme.secondaryDark,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+  },
+  textInput: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  crossIcon: {
+    position: 'absolute',
+    right: 14,
+  },
+});
