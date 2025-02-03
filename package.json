@@ -1,7 +1,7 @@
 {
   "name": "react-native-autocomplete-multiselect",
-  "version": "0.1.5",
-  "description": "Lightweight, flexible dropdown picker for React Native, featuring autocomplete (typeahead) functionality. It emulates the <select> interfaces for each platform, making it ideal for use cases like tagging, contact lists, country selection, or any functionality requiring list-based selection.",
+  "version": "0.1.6",
+  "description": "Flexible dropdown autocomplete picker for React Native, featuring (typeahead) functionality.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -47,8 +47,17 @@
   },
   "keywords": [
     "react-native",
-    "ios",
-    "android"
+    "dropdown",
+    "autocomplete",
+    "typeahead",
+    "multiselect",
+    "select",
+    "search",
+    "react native autocomplete",
+    "react native dropdown",
+    "react native picker",
+    "react native select",
+    "react native search"
   ],
   "repository": {
     "type": "git",
